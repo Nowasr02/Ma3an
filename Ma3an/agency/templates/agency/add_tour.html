@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Tour</title>
+</head>
+<body>
+    <h1>Add New Tour</h1>
+
+    <form id="tourForm">
+        <div>
+            <label for="tourName">Tour Name</label><br>
+            <input type="text" id="tourName" name="tourName" placeholder="Enter tour name"><br><br>
+
+            <label for="description">Description</label><br>
+            <textarea id="description" name="description" placeholder="Enter tour description"></textarea><br><br>
+
+            <label for="country">Country</label><br>
+            <input type="text" id="country" name="country" placeholder="Enter country"><br><br>
+
+            <label for="city">City</label><br>
+            <input type="text" id="city" name="city" placeholder="Enter city"><br><br>
+
+            <label for="travelers">Number of travelers</label><br>
+            <input type="number" id="travelers" name="travelers" placeholder="Enter number" min="1"><br><br>
+
+            <label for="price">Price (SAR)</label><br>
+            <input type="number" id="price" name="price" placeholder="Enter price" min="0" step="0.01"><br><br>
+
+            <label for="startDate">Start Date</label><br>
+            <input type="date" id="startDate" name="startDate"><br><br>
+
+            <label for="endDate">End Date</label><br>
+            <input type="date" id="endDate" name="endDate"><br><br>
+        </div>
+
+        <button type="button" onclick="goBack()">← Previous</button>
+        <button type="button" onclick="saveDraft()">💾 Save as Draft</button>
+        <button type="button" onclick="nextStep()">Next →</button>
+    </form>
+
+    <script>
+        function goBack() {
+            alert('← Going back to previous step...');
+        }
+
+        function saveDraft() {
+            const formData = {
+                tourName: document.getElementById('tourName').value,
+                description: document.getElementById('description').value,
+                country: document.getElementById('country').value,
+                city: document.getElementById('city').value,
+                travelers: document.getElementById('travelers').value,
+                price: document.getElementById('price').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
+            };
+            console.log('Saving draft:', formData);
+            alert('💾 Draft saved successfully!');
+        }
+
+        function nextStep() {
+            const tourName = document.getElementById('tourName').value;
+            const country = document.getElementById('country').value;
+            const city = document.getElementById('city').value;
+
+            if (!tourName || !country || !city) {
+                alert('⚠️ Please fill in at least Tour Name, Country, and City');
+                return;
+            }
+
+            const formData = {
+                tourName: tourName,
+                description: document.getElementById('description').value,
+                country: country,
+                city: city,
+                travelers: document.getElementById('travelers').value,
+                price: document.getElementById('price').value,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value
+            };
+            console.log('Moving to next step with data:', formData);
+            alert('✅ Proceeding to next step...');
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').setAttribute('min', today);
+        document.getElementById('endDate').setAttribute('min', today);
+
+        document.getElementById('startDate').addEventListener('change', function() {
+            document.getElementById('endDate').setAttribute('min', this.value);
+        });
+    </script>
+</body>
+</html>
