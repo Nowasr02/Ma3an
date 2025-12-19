@@ -1,0 +1,14 @@
+<div class="dashboard">
+  <aside class="sidebar">
+    <ul>
+      <li><a href="{% url 'traveler:traveler_dashboard_view' %}">Dashboard</a></li>
+      <li><a href="{% url 'traveler:tours_view' %}">All Tours</a></li>
+      <li><a href="#">My Tours</a></li>
+      <li><a href="#">Profile</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+</div>
