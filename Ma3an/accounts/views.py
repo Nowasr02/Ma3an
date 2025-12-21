@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from .models import Traveler, Agency
+from .models import Traveler, Agency, Notification
 from django.contrib import messages
 from django_countries import countries
 
@@ -100,3 +100,12 @@ def log_out_view(request : HttpRequest):
     logout(request)
     messages.success(request, "logged out successfuly", "alert-success")
     return redirect("main:home_view")
+
+# @login_required
+def mark_notification_read(request, pk):
+    notification = get_object_or_404(Notification, pk=pk, user=request.user)
+    notification.is_read = True
+    notification.save()
+
+    next_url = request.GET.get("next")
+    return redirect(next_url)
