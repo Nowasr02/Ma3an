@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 # from accounts.models import TourGuide
-from accounts.models import TourGuide
-from agency.models import Agency, Subscription
+from accounts.models import TourGuide, Agency
+# from accounts.models import Agency
+# , Subscription
 
 
 

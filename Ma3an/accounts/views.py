@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest
 from django.contrib.auth import authenticate, login, logout
+from .forms import UserForm, TravelerForm, AgencyForm
 from .models import Traveler, Agency, TourGuide, Language, Notification
 from django.contrib import messages
 import pycountry
-import random
-import string
+# import random
+# import string
+from django.contrib.auth.decorators import login_required
+from django.utils.crypto import get_random_string
 
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
@@ -15,121 +18,200 @@ User = settings.AUTH_USER_MODEL
 
 # Create your views here.
 
-def signup_view(request : HttpRequest):
-    
+def signup_view(request):
     countries = [(c.alpha_2, c.name) for c in pycountry.countries]
-    
+
     if request.method == "POST":
         role = request.POST.get("role")
 
-        user = User.objects.create_user(
-            role = request.POST["role"],
-            email=request.POST["email"],
-            username=request.POST["username"],
-            password=request.POST["password"],
-            first_name=request.POST.get("first_name", ""),
-            last_name=request.POST.get("last_name", ""),
-        )
+        user_form = UserForm(request.POST)  # إنشاء الفورم للـ POST
+        if user_form.is_valid():
+            user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data["password"])
+            user.role = role
+            user.save()
 
-        if role == "traveler":
-            Traveler.objects.create(
-                user=user,
-                date_of_birth=request.POST["date_of_birth"],
-                phone_number=request.POST["phone_number"],
-                gender=request.POST["gender"],
-                nationality=request.POST["nationality"],
-                passport_number=request.POST["passport_number"],
-                passport_expiry_date=request.POST["passport_expiry_date"]
-            )
+            if role == "traveler":
+                traveler_form = TravelerForm(request.POST)
+                if traveler_form.is_valid():
+                    traveler = traveler_form.save(commit=False)
+                    traveler.user = user
+                    traveler.save()
+                else:
+                    messages.error(request, traveler_form.errors)
+                    return render(request, "accounts/signup.html", {"countries": countries, "user_form": user_form})
 
-        elif role == "agency":
-            Agency.objects.create(
-                user=user,
-                agency_name=request.POST.get("agency_name"),
-                phone_number=request.POST.get("phone_number"),
-                license_number=request.POST.get("license_number"),
-                city=request.POST.get("city"),
-                address=request.POST.get("address"),
-                commercial_license=request.POST.get("commercial_license"),
-                approval_status="pending"
-            )
+            elif role == "agency":
+                agency_form = AgencyForm(request.POST)
+                if agency_form.is_valid():
+                    agency = agency_form.save(commit=False)
+                    agency.user = user
+                    agency.approval_status = "pending"
+                    agency.save()
+                else:
+                    messages.error(request, agency_form.errors)
+                    return render(request, "accounts/signup.html", {"countries": countries, "user_form": user_form})
 
-        messages.success(request, "Account created successfully")
+            messages.success(request, "Account created successfully")
+            return redirect("accounts:signin_view")
+        else:
+            messages.error(request, user_form.errors)
+
+    else:
+        # إنشاء الفورم للـ GET حتى لا يكون undefined
+        user_form = UserForm()
+
+    return render(request, "accounts/signup.html", {"countries": countries, "user_form": user_form})
+
+
+
+
+# def tourguide_profile_view(request):
+#     # if not request.user.is_authenticated or request.user.role != "agency":
+#     #     messages.error(request, "Only registered agencies can add tour guides.")
+#     #     return redirect("accounts:signin_view")
+
+#     countries = [(c.alpha_2, c.name) for c in pycountry.countries]
+#     languages_list = Language.objects.all()
+    
+#     # languages_list = [
+#     #     (lang.alpha_2, lang.name) 
+#     #     for lang in pycountry.languages 
+#     #     if hasattr(lang, "alpha_2")
+#     # ]
+
+#     if request.method == "POST":
+#         user = User.objects.create_user(
+#             email=request.POST["email"],
+#             username=request.POST.get("username", ""),
+#             first_name=request.POST.get("first_name", ""),
+#             last_name=request.POST.get("last_name", ""),
+#             password=request.POST["password"],
+#             role="tourGuide"
+#         )
+
+#         tour_guide = TourGuide.objects.create(
+#             user=user,
+#             agency=request.user.agency_profile,
+#             gender=request.POST["gender"],
+#             phone_number=request.POST.get("phone_number", ""),
+#             # languages=languages_str,
+#             nationality=request.POST.get("nationality"),
+#             passport_number=request.POST.get("passport_number"),
+#             passport_expiry_date=request.POST.get("passport_expiry_date"),
+#             is_active=True
+#         )
+        
+#         # selected_languages = request.POST.getlist("languages")
+#         # languages_str = ",".join(selected_languages)
+
+#         selected_languages_ids = request.POST.getlist("languages")
+#         if selected_languages_ids:
+#             tour_guide.languages.set(selected_languages_ids)
+
+#         messages.success(request, "Tour Guide account created successfully")
+#         return redirect("agency_dashboard")
+
+#     return render(request, "accounts/tour_guide_signup.html", {
+#         "countries": countries,
+#         "languages": languages_list,
+#     })
+
+
+
+# @login_required
+def tourguide_profile_view(request):
+    if request.user.role != "tourGuide":
+        messages.error(request, "Access denied.")
         return redirect("accounts:signin_view")
-    return render(request, "accounts/signup.html",
-                  {"countries": countries} 
-                  )
+
+    tour_guide = request.user.tourguide
+    languages = Language.objects.all()
+    countries = [(c.alpha_2, c.name) for c in pycountry.countries]
+
+    if request.method == "POST":
+        # بيانات User
+        request.user.first_name = request.POST.get("first_name")
+        request.user.last_name = request.POST.get("last_name")
+        request.user.save()
+
+        # بيانات TourGuide
+        tour_guide.gender = request.POST.get("gender")
+        tour_guide.phone = request.POST.get("phone")
+        tour_guide.nationality = request.POST.get("nationality")
+        tour_guide.passport_number = request.POST.get("passport_number")
+        tour_guide.passport_expiry_date = request.POST.get("passport_expiry_date")
+
+        selected_languages = request.POST.getlist("languages")
+        tour_guide.languages.set(selected_languages)
+
+        tour_guide.save()
+
+        messages.success(request, "Profile updated successfully.")
+        return redirect("tourguide_profile")
+
+    return render(request, "accounts/tourguide_profile.html", {
+        "tour_guide": tour_guide,
+        "languages": languages,
+        "countries": countries
+    })
 
 
 
-def signup_tourguide_view(request):
-    # if not request.user.is_authenticated or request.user.role != "agency":
-    #     messages.error(request, "Only registered agencies can add tour guides.")
-    #     return redirect("accounts:signin_view")
+
+
+
+# def generate_temp_password(length=8):
+#     letters = string.ascii_letters + string.digits
+#     return ''.join(random.choice(letters) for i in range(length))
+
+
+def create_tourguide_view(request : HttpRequest):
+    # temp_password = generate_temp_password()
+
+    # user = User.objects.create_user(
+    #     email=request.POST["email"],
+    #     password=temp_password,
+    #     role="tourguide"
+    # )
+
+    # messages.success(request, "Tour Guide account created successfully. Login details sent by email.")
+    # return redirect("agency_dashboard")
+    
+     # صلاحية: لازم يكون Agency
+    if request.user.role != "agency":
+        messages.error(request, "Only agencies can create tour guides.")
+        return redirect("accounts:signin_view")
 
     countries = [(c.alpha_2, c.name) for c in pycountry.countries]
     languages_list = Language.objects.all()
-    
-    # languages_list = [
-    #     (lang.alpha_2, lang.name) 
-    #     for lang in pycountry.languages 
-    #     if hasattr(lang, "alpha_2")
-    # ]
 
     if request.method == "POST":
+        temp_password = get_random_string(10)
+
         user = User.objects.create_user(
             email=request.POST["email"],
-            username=request.POST.get("username", ""),
-            first_name=request.POST.get("first_name", ""),
-            last_name=request.POST.get("last_name", ""),
-            password=request.POST["password"],
+            username=request.POST["email"],
+            password=temp_password,
             role="tourGuide"
         )
 
         tour_guide = TourGuide.objects.create(
             user=user,
             agency=request.user.agency_profile,
-            gender=request.POST["gender"],
-            phone_number=request.POST.get("phone_number", ""),
-            # languages=languages_str,
-            nationality=request.POST.get("nationality"),
-            passport_number=request.POST.get("passport_number"),
-            passport_expiry_date=request.POST.get("passport_expiry_date"),
             is_active=True
         )
-        
-        # selected_languages = request.POST.getlist("languages")
-        # languages_str = ",".join(selected_languages)
 
-        selected_languages_ids = request.POST.getlist("languages")
-        if selected_languages_ids:
-            tour_guide.languages.set(selected_languages_ids)
-
-        messages.success(request, "Tour Guide account created successfully")
+        messages.success(
+            request,
+            "Tour guide created successfully. Login details sent by email."
+        )
         return redirect("agency_dashboard")
 
-    return render(request, "accounts/tour_guide_signup.html", {
+    return render(request, "accounts/create_tourguide.html", {
         "countries": countries,
         "languages": languages_list,
     })
-
-
-def generate_temp_password(length=8):
-    letters = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters) for i in range(length))
-
-
-def add_tourguide(request : HttpRequest):
-    temp_password = generate_temp_password()
-
-    user = User.objects.create_user(
-        email=request.POST["email"],
-        password=temp_password,
-        role="tourguide"
-    )
-
-    messages.success(request, "Tour Guide account created successfully. Login details sent by email.")
-    return redirect("agency_dashboard")
 
         
 def signin_view(request : HttpRequest):

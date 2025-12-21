@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create Tour Guide</h2>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" required>
+            <small class="text-muted">
+                Login details will be sent to this email.
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create Tour Guide
+        </button>
+    </form>
+</div>
+{% endblock %}
