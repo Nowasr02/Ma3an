@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
-# from agency.models import GeofenceEven
 
 
 class User(AbstractUser):

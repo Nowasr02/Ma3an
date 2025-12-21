@@ -127,7 +127,12 @@ AUTH_USER_MODEL = 'accounts.User'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
-# Payment Test S
+# Payment Test 
+
+MOYASAR_PUBLISHABLE_KEY = os.environ.get("MOYASAR_PUBLISHABLE_KEY")
+MOYASAR_SECRET_KEY = os.environ.get("MOYASAR_SECRET_KEY")
+MOYASAR_BASE_URL = os.environ.get("MOYASAR_BASE_URL", "https://api.moyasar.com/v1")
+
 
 STRIPE_SECRET_KEY = "sk_test_xxxxxxxxxxxxx"
 STRIPE_PUBLISHABLE_KEY = "pk_test_xxxxxxxxxxxxx"

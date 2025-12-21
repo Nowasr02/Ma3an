@@ -1,5 +1,6 @@
 import stripe
 import json
+import requests
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -16,6 +17,9 @@ from traveler.services.location_service import save_traveler_location
 from traveler.services.geofence_service import check_geofences_and_notify_users
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def traveler_required(view_func):
+    return user_passes_test(lambda u: hasattr(u, "traveler"))(view_func)
 
 def traveler_dashboard_view(request):
     traveler = Traveler.objects.get(user=request.user)
@@ -66,29 +70,138 @@ def tour_detail_view(request, tour_id):
         "joined": joined
     })
 
+@traveler_required
+@login_required
+def start_payment_view(request):
+    tour = get_object_or_404(Tour, id=request.GET.get("tour_id"))
 
-def traveler_payment_view(request, tour_id):
-    traveler = Traveler.objects.get(user=request.user)
-    join = get_object_or_404(TravelerPayment, traveler=traveler, tour_id=tour_id)
+    already_paid = TravelerPayment.objects.filter(
+        traveler=request.user.traveler_profile,
+        tour=tour,
+        status=TravelerPayment.Status.PAID
+    ).exists()
 
-    intent = stripe.PaymentIntent.create(
-        amount=int(join.amount * 100),  # cents
-        currency="usd",
-        metadata={"tour_id": tour_id, "traveler": traveler.id},
+    next_url = request.GET.get("next")
+    if already_paid:
+        messages.warning(request, "You have already paid for this tour.")
+        if next_url:
+            return redirect(next_url)
+        return redirect("traveler:traveler_dashboard_view")
+    
+    pending_payment = TravelerPayment.objects.filter(
+        traveler=request.user.traveler_profile,
+        tour=tour,
+        status=TravelerPayment.Status.INITIATED
+    ).first()
+
+    if pending_payment:
+        if pending_payment.transaction_url:
+            return redirect(pending_payment.transaction_url)
+
+    next_url = request.GET.get("next")
+    if pending_payment:
+        messages.warning(request, "Payment is already in progress.")
+        if next_url:
+            return redirect(next_url)
+        return redirect("traveler:traveler_dashboard_view")
+    
+    amount_halalas = 1000  # 10 SAR
+
+    payment = TravelerPayment.objects.create(
+        traveler=request.user.traveler_profile,
+        amount=amount_halalas,
+        currency="SAR",
+        description="Test Payment (Sandbox)",
     )
 
-    return render(request, "traveler/payment.html", {
-        "client_secret": intent.client_secret,
-        "stripe_key": settings.STRIPE_PUBLISHABLE_KEY,
-        "join": join
-    })
+    callback_url = request.build_absolute_uri(
+        reverse("traveler:callback_view")
+    )
 
-def payment_success(request, tour_id):
-    join = get_object_or_404(TravelerPayment, tour_id=tour_id, traveler__user=request.user)
-    join.status = "paid"
-    join.save()
-    messages.success(request, "Payment successful 🎉")
-    return redirect("traveler:tour_detail_view", tour_id=tour_id)
+    r = requests.post(
+        f"{settings.MOYASAR_BASE_URL}/payments",
+        auth=(settings.MOYASAR_SECRET_KEY, ""),
+        json={
+            "amount": payment.amount,
+            "currency": payment.currency,
+            "description": payment.description,
+            "callback_url": callback_url,
+        },
+        timeout=30,
+    )
+    r.raise_for_status()
+    data = r.json()
+
+    payment.moyasar_id = data.get("id")
+    payment.status = data.get("status", payment.status)
+    payment.transaction_url = (data.get("source") or {}).get("transaction_url")
+    payment.raw = data
+    payment.save()
+
+    if payment.transaction_url:
+        return redirect(payment.transaction_url)
+
+    return render(request, "traveler/payment_error.html", {"payment": payment})
+
+@traveler_required
+@login_required
+def callback_view(request):
+    moyasar_id = request.GET.get("id")
+    if not moyasar_id:
+        return render(request, "traveler/callback.html", {"error": "Missing payment id"})
+    
+    payment = get_object_or_404(TravelerPayment, moyasar_id=moyasar_id)
+
+    if payment.status == TravelerPayment.Status.PAID:
+        return render(request, "traveler/callback.html", {
+            "payment": payment,
+            "message": "Payment already confirmed."
+        })
+
+    r = requests.get(
+        f"{settings.MOYASAR_BASE_URL}/payments/{moyasar_id}",
+        auth=(settings.MOYASAR_SECRET_KEY, ""),
+        timeout=30,
+    )
+    r.raise_for_status()
+    data = r.json()
+
+    new_status = data.get("status")
+
+    if payment.status != TravelerPayment.Status.PAID:
+        payment.status = new_status
+        payment.raw = data
+        payment.save()
+
+    payment.status = data.get("status", payment.status)
+    payment.raw = data
+    payment.save(update_fields=["status", "raw"])
+
+    return render(request, "payments/callback.html", {"payment": payment})
+
+# @login_required
+# def traveler_payment_view(request, tour_id):
+#     traveler = Traveler.objects.get(user=request.user)
+#     join = get_object_or_404(TravelerPayment, traveler=traveler, tour_id=tour_id)
+
+#     intent = stripe.PaymentIntent.create(
+#         amount=int(join.amount * 100),  # cents
+#         currency="usd",
+#         metadata={"tour_id": tour_id, "traveler": traveler.id},
+#     )
+
+#     return render(request, "traveler/payment.html", {
+#         "client_secret": intent.client_secret,
+#         "stripe_key": settings.STRIPE_PUBLISHABLE_KEY,
+#         "join": join
+#     })
+
+# def payment_success(request, tour_id):
+#     join = get_object_or_404(TravelerPayment, tour_id=tour_id, traveler__user=request.user)
+#     join.status = "paid"
+#     join.save()
+#     messages.success(request, "Payment successful 🎉")
+#     return redirect("traveler:tour_detail_view", tour_id=tour_id)
 
 
 @login_required
@@ -131,5 +244,3 @@ def save_location_view(request):
 
     return JsonResponse({"ok": True})
 
-def traveler_required(view_func):
-    return user_passes_test(lambda u: hasattr(u, "traveler"))(view_func)

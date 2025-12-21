@@ -37,7 +37,12 @@ class Tour(models.Model):
     end_date = models.DateField()
     days = models.PositiveIntegerField(default=1)
 
-    tour_guide = models.ForeignKey("accounts.TourGuide", on_delete=models.SET_NULL, null=True, blank=True)
+    tour_guide = models.ForeignKey(
+        "accounts.TourGuide",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     image = models.ImageField(upload_to='tour_images/', null=True, blank=True)
 
     def __str__(self):
@@ -85,6 +90,12 @@ class GeofenceEvent(models.Model):
         ("enter", "Enter"),
         ("exit", "Exit"),
     ]
+
+    tour_guide = models.ForeignKey(
+        "accounts.TourGuide",
+        on_delete=models.CASCADE,
+        related_name="geofence_events"
+    )
 
     traveler = models.ForeignKey(
         "accounts.Traveler",
