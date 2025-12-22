@@ -362,8 +362,8 @@
                     {% if user.is_authenticated %}
 
                         <!-- Traveler -->
-                        {% if user.role == 'traveler' %}
-                        <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ tour.id }}&next={{ request.path }}"><button class="buy-btn">Pay Now</button></a>
+                        {% if user.is_authenticated and user.traveler_profile %}
+                        <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ item.tour.id }}&next={{ request.path }}"><button class="buy-btn">Pay Now</button></a>
                         {% endif %}
 
                 
@@ -384,7 +384,11 @@
                 <i class="fas fa-map-marked-alt fa-5x"></i>
                 <h4>No tours available yet</h4>
                 <p>Be the first to add an amazing tour experience!</p>
+                {% if user.is_authenticated %}
+                {% if user.role == 'agency' %}
                 <a href="{% url 'agency:add_tour' %}" class="btn btn-primary">+ Create Your First Tour</a>
+                {% endif %}
+                {% endif %}
             </div>
             {% endfor %}
         </div>
