@@ -5,6 +5,17 @@ from datetime import datetime
 # -------------------------
 # Agency Views
 # -------------------------
+
+
+def confirm_tour_view(request, tour_id):
+    tour = get_object_or_404(Tour, id=tour_id)
+    if request.method == 'POST':
+        tour.confirmed = True  # لو عندك حقل confirmed في المودل
+        tour.save()
+        messages.success(request, 'Tour confirmed successfully!')
+        return redirect('agency:all_tours')
+    return redirect('agency:dashboard')
+
 def dashboard_view(request):
     return render(request, 'agency/agency_dashboard.html')
 
@@ -59,6 +70,7 @@ def add_tour_view(request):
                 'price': price,
                 'start_date': request.POST.get('start_date'),
                 'end_date': request.POST.get('end_date'),
+                
             })
 
         if start_date > end_date:
@@ -93,6 +105,7 @@ def add_tour_view(request):
     return render(request, 'agency/add_tour.html', {
         'start_date': start_date_str,
         'end_date': end_date_str,
+        'current_step': 1,
     })
 
 def all_tours_view(request):
@@ -109,7 +122,6 @@ def all_tours_view(request):
 
 def edit_tour_view(request, tour_id):
     tour = get_object_or_404(Tour, id=tour_id)
-    guides = TourGuide.objects.all()
 
     if request.method == "POST":
         tour.name = request.POST.get('tourName')
@@ -121,8 +133,6 @@ def edit_tour_view(request, tour_id):
         tour.start_date = request.POST.get('startDate')
         tour.end_date = request.POST.get('endDate')
 
-        tour_guide_id = request.POST.get('tourGuide')
-        tour.tour_guide = TourGuide.objects.filter(id=tour_guide_id).first() if tour_guide_id else None
 
         if 'tourImage' in request.FILES:
             tour.image = request.FILES['tourImage']
@@ -131,7 +141,7 @@ def edit_tour_view(request, tour_id):
         messages.success(request, "✅ Tour updated successfully!")
         return redirect('all_tours')
 
-    return render(request, 'agency/edit_tour.html', {'tour': tour, 'guides': guides})
+    return render(request, 'agency/edit_tour.html', {'tour': tour})
 
 
 def delete_tour_view(request, tour_id):
@@ -149,7 +159,9 @@ def tour_detail_view(request, tour_id):
     schedules = tour.schedules.all()
     return render(request, 'agency/tour_detail.html', {
         'tour': tour,
-        'schedules': schedules
+        'schedules': schedules,
+        'current_step': 3
+        
     })
 
 # -------------------------

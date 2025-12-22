@@ -359,9 +359,23 @@
                         <div class="tour-price">{{ item.tour.price }} SAR<span class="person-price">/ person</span></div>
                     </div>
                     <div class="action-buttons">
-                        <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-book">Details</a>
+                    {% if user.is_authenticated %}
+
+                        <!-- Traveler -->
+                        {% if user.role == 'traveler' %}
+                        <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ tour.id }}&next={{ request.path }}"><button class="buy-btn">Pay Now</button></a>
+                        {% endif %}
+
+                
+                        <!-- Agency -->
+                        {% if user.role == 'agency' %}
                         <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn-secondary-action">Edit</a>
                         <a href="{% url 'agency:delete_tour' item.tour.id %}" class="btn-secondary-action">Delete</a>
+                        {% endif %}
+
+                        <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-book">Details</a>
+                        
+                    {% endif %}
                     </div>
                 </div>
             </div>

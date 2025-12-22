@@ -30,15 +30,20 @@ class TravelerPayment(models.Model):
     traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)
     tour = models.ForeignKey("agency.Tour", on_delete=models.CASCADE)
 
-    STATUS_CHOICES = [
-        ("pending", "Pending"),
-        ("paid", "Paid"),
-        ("failed", "Failed"),
-    ]
+    class Status(models.TextChoices):
+        INITIATED = "initiated", "Initiated"
+        PAID = "paid", "Paid"
+        FAILED = "failed", "Failed"
 
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
-    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.INITIATED)
+    amount = models.IntegerField(help_text="Amount in halalas")
+    currency = models.CharField(max_length=3, default="SAR")
+    payment_id = models.CharField(max_length=100, blank=True, null=True)
+    moyasar_id = models.CharField(max_length=64, blank=True, null=True, unique=True)
+    transaction_url = models.URLField(blank=True, null=True)
+    raw = models.JSONField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=True, default="")
 
 class Review(models.Model):
     traveler = models.ForeignKey(Traveler, on_delete=models.CASCADE)

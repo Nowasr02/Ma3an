@@ -2,11 +2,10 @@
 {% load static %}
 
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/agency.css' %}">
-{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/agency.css' %}">
+
 <div class="container mt-4 bg-light">
 
     <!-- Multi Step Header -->
@@ -59,9 +58,24 @@
         <p>No schedule added yet.</p>
     {% endif %}
 
-    <div class="mt-4">
-        <a href="{% url 'agency:dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
-    </div>
+  <div class="mt-4 d-flex gap-2">
+    <!-- زر العودة للداشبورد -->
+    <a href="{% url 'agency:dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+
+    <!-- زر تأكيد المعلومات (يحفظ البيانات) -->
+    <form action="{% url 'agency:confirm_tour' tour.id %}" method="post" class="mx-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">
+        Confirm
+    </button>
+</form>
+
+
+    <!-- زر جميع التور -->
+    <a href="{% url 'agency:all_tours' %}" class="btn btn-secondary">All Tours</a>
+</div>
+
+
 
 </div>
 {% endblock %}
