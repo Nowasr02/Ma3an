@@ -5,7 +5,6 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from accounts.models import Agency, Traveler, Notification
 from backOffice.decorators import admin_only
-# from backOffice.models import TravelAgency, Notification, Profile
 from agency.models import Subscription
 
 from backOffice.decorators import admin_only
