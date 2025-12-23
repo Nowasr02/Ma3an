@@ -1,68 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select the subscription package</title>
-</head>
-<body>
-    <h1>Select the subscription package</h1>
-    <!-- Packages Grid -->
-    <div>
-        <!-- Basic Package -->
-        <div>
-            <h2>Basic</h2>
-            <p>Price: $9.99 per Month</p>
-            <ul>
-                <li>20 Tours</li>
-                <li>30 Supervisors</li>
-                <li>100 Travelers</li>
-                <li>limited Notifications</li>
-                <li>Dedicated Account Manager (Not included)</li>
-                <li>API Access (Not included)</li>
-                <li>Live GPS tracking (Not included)</li>
-            </ul>
-            <a href="{% url 'agency:agency_payment' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                Select Plan
-            </a>
-        </div>
-        <!-- Standard Package -->
-        <div>
-            <h2>Standard</h2>
-            <p>Price: $19.99 per Month</p>
-            <ul>
-                <li>50 Tours</li>
-                <li>90 Supervisors</li>
-                <li>200 Travelers</li>
-                <li>Unlimited Notifications</li>
-                <li>Dedicated Account Manager</li>
-                <li>API Access (Not included)</li>
-                <li>Live GPS tracking (Not included)</li>
-            </ul>
-            <a href="{% url 'agency:agency_payment' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                Select Plan
-            </a>
-        </div>
-        <!-- Premium Package -->
-        <div>
-            <h2>Premium</h2>
-            <p>Price: $49.99 per Month</p>
-            <ul>
-                <li>Unlimited Tours</li>
-                <li>Unlimited Supervisors</li>
-                <li>Unlimited Travelers</li>
-                <li>Unlimited Notifications</li>
-                <li>Dedicated Account Manager</li>
-                <li>API Access</li>
-                <li>Live GPS tracking</li>
-            </ul>
-            <a href="{% url 'agency:agency_payment' %}" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">
-                Select Plan
-            </a>
-        </div>
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if messages %}
+    <ul class="mb-4">
+    {% for message in messages %}
+        <li class="text-red-600">{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+<h1 class="text-2xl font-bold mb-6 text-center">اشتراك الوكالة</h1>
+
+{% if current_subscription %}
+    <!-- اشتراك حالي -->
+    <div class="border p-6 rounded shadow text-center max-w-md mx-auto">
+        <h2 class="font-bold text-xl mb-4">اشتراكك الحالي: {{ current_subscription.subscriptionType|capfirst }}</h2>
+        <p class="text-gray-700 mb-2">المبلغ المدفوع: {{ amount_paid }} SAR</p>
+
+        <ul class="text-left mb-4">
+            <li>Tours: {% if current_subscription.tours_limit %}{{ current_subscription.tours_limit }}{% else %}Unlimited{% endif %}</li>
+            <li>Supervisors: {% if current_subscription.supervisors_limit %}{{ current_subscription.supervisors_limit }}{% else %}Unlimited{% endif %}</li>
+            <li>Travelers: {% if current_subscription.travelers_limit %}{{ current_subscription.travelers_limit }}{% else %}Unlimited{% endif %}</li>
+        </ul>
+
+        <p class="text-green-600 font-semibold">تم تفعيل اشتراكك بنجاح!</p>
     </div>
-    <div class="mb-3">
-        <a href="{% url 'agency:dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+{% else %}
+    <!-- لا يوجد اشتراك، عرض الباقات -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for plan in subscriptions %}
+        <div class="border p-4 rounded shadow text-center">
+            <h2 class="font-bold text-lg mb-2">{{ plan.subscriptionType|capfirst }} Plan</h2>
+            <p class="text-gray-700 mb-2">Price: {{ plan.price }} SAR</p>
+
+            <ul class="text-left mb-4">
+                <li>Tours: {% if plan.tours_limit %}{{ plan.tours_limit }}{% else %}Unlimited{% endif %}</li>
+                <li>Supervisors: {% if plan.supervisors_limit %}{{ plan.supervisors_limit }}{% else %}Unlimited{% endif %}</li>
+                <li>Travelers: {% if plan.travelers_limit %}{{ plan.travelers_limit }}{% else %}Unlimited{% endif %}</li>
+            </ul>
+
+            <!-- زر الشراء -->
+          <form action="{% url 'agency:select_subscription' plan.id %}" method="post">
+    {% csrf_token %}
+    <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+        Buy Now
+    </button>
+</form>
+
+
+        </div>
+        {% endfor %}
     </div>
-</body>
-</html>
+{% endif %}
+{% endblock %}

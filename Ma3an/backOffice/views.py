@@ -5,6 +5,7 @@ from django.db.models import Q
 from accounts.models import Agency, Traveler, Notification
 from backOffice.decorators import admin_only
 from agency.models import Subscription
+from django.views.decorators.http import require_POST
 
 from backOffice.decorators import admin_only
 
