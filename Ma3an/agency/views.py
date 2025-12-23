@@ -10,7 +10,8 @@ from .models import Subscription, AgencyPayment
 from accounts.models import Agency
 from django.contrib.auth.decorators import login_required
 from accounts.models import TourGuide
-
+from django.db.models import Sum
+from traveler.models import TravelerPayment # استيراد موديل الدفع من تطبيق ترافل
 # -------------------------
 # Agency Views
 # -------------------------
@@ -45,23 +46,31 @@ def confirm_tour_view(request, tour_id):
         return redirect('agency:all_tours')
     return redirect('agency:dashboard')
 
+
+
 @login_required
 def dashboard_view(request):
     agency = request.user.agency_profile
 
-    # جلب الرحلات التابعين للوكالة فقط
+    # 1. جلب رحلات الشركة
     tours = Tour.objects.filter(agency=agency)
 
-    upcoming_tours_count = tours.filter(start_date__gte=datetime.today()).count()
-    active_tours_count = tours.filter(start_date__lte=datetime.today(), end_date__gte=datetime.today()).count()
-    travelers_count = sum(t.travelers for t in tours)
+    # 2. حساب عدد المرشدين (Tour Guides) التابعين لهذه الشركة فقط
+    tour_guides_count = TourGuide.objects.filter(agency=agency).count()
+
+    # 3. حساب عدد المسافرين (اليوزرز) الذين دفعوا وسجلوا فعلياً في رحلات الشركة
+    # سنبحث في جدول TravelerPayment عن العمليات التي حالتها 'paid' وتخص رحلات هذه الوكالة
+    travelers_count = TravelerPayment.objects.filter(
+        tour__agency=agency, 
+        status=TravelerPayment.Status.PAID
+    ).count()
 
     context = {
         'tours': tours,
-        'upcoming_tours_count': upcoming_tours_count,
-        'active_tours_count': active_tours_count,
-        'travelers_count': travelers_count,
-        # شلنا tour_guides_count
+        'upcoming_tours_count': tours.filter(start_date__gte=datetime.today()).count(),
+        'active_tours_count': tours.filter(start_date__lte=datetime.today(), end_date__gte=datetime.today()).count(),
+        'travelers_count': travelers_count, # عدد اليوزرز الذين أتموا الدفع
+        'tour_guides_count': tour_guides_count, # عدد مرشدي الشركة
     }
     return render(request, 'agency/agency_dashboard.html', context)
 
