@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
+from django.core.paginator import Paginator
+from decimal import Decimal
 from .models import Tour, TourSchedule
 from datetime import datetime
 from accounts.models import TourGuide
@@ -163,6 +165,10 @@ def all_tours_view(request):
         tours = tours.filter(price__gte=Decimal("1000"), price__lte=Decimal("5000"))
     elif price_range == '5000+':
         tours = tours.filter(price__gte=Decimal("5000"))
+     # ===== Pagination =====
+    paginator = Paginator(tours, 6)  # 👈 عدد الكروت في الصفحة
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     # ===== إعداد قائمة المدن =====
     cities = (
@@ -183,7 +189,7 @@ def all_tours_view(request):
 
 
     return render(request, 'agency/all_tours.html', {
-        'tours': tours_with_duration,
+        'page_obj': page_obj,
         'cities': cities,  # قائمة المدن للفلتر
         'selected_destination': destination,
         'selected_duration': duration,

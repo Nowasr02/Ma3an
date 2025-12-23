@@ -524,3 +524,77 @@ body {
 .pay-btn:hover::after {
     left: 120%;
 }
+
+/* pagination */
+/* ============================= */
+/* Pagination Fix (Bootstrap Safe) */
+/* ============================= */
+
+.pagination-wrapper {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 50px 0 30px !important;
+    flex-wrap: wrap !important;
+}
+
+.pagination-wrapper .page-btn {
+    all: unset;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 999px !important;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #198754 !important;
+    border: 2px solid #198754 !important;
+    background-color: #ffffff !important;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 18px rgba(15, 118, 110, 0.15);
+    text-decoration: none !important;
+}
+
+.pagination-wrapper .page-btn:hover {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+.pagination-wrapper .page-btn.active {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+    pointer-events: none;
+}
+
+
+/* Arrows styling */
+.page-btn:first-child,
+.page-btn:last-child {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Disabled look (optional if you add later) */
+.page-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    box-shadow: none;
+}
+
+/* Mobile friendly */
+@media (max-width: 480px) {
+    .pagination-wrapper {
+        gap: 6px;
+    }
+
+    .page-btn {
+        min-width: 36px;
+        height: 36px;
+        font-size: 13px;
+    }
+}
