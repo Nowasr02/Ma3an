@@ -8,6 +8,9 @@ import pycountry
 from django.contrib.auth.decorators import login_required
 # from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
+from django_countries import countries
+
+
 
 User = get_user_model()
 
@@ -96,11 +99,10 @@ def create_tourguide_view(request: HttpRequest):
             is_active=True
         )
 
-        messages.success(
-            request,
-            "Tour guide created successfully. Login details sent by email."
-        )
-        return redirect("agency_dashboard")
+        messages.success(request, "Tour guide created successfully.")
+        return redirect("tourGuide:all_tourguides")
+    else:
+        form = TourGuideCreateForm()
 
     return render(request, "accounts/create_tourguide.html", {"form": form})
 

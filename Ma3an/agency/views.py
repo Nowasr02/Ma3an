@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.db.models import Q
 from .models import Tour, TourSchedule
 from datetime import datetime
 import requests
@@ -216,12 +217,22 @@ def delete_tour_view(request, tour_id):
 def all_tours_view(request):
     tours = Tour.objects.all()
 
+    # ===== Search (by tour name + by agency name) =====
+    query = request.GET.get("q", "").strip()
+    if query:
+        tours = tours.filter(
+            Q(name__icontains=query) |
+            Q(agency__agency_name__icontains=query)
+        )
+
+    from decimal import Decimal
+
     # ===== فلترة الوجهة =====
     destination = request.GET.get('destination')
     if destination and destination != "All":
-        tours = tours.filter(city=destination)
+        tours = tours.filter(city__iexact=destination)
 
-    # ===== فلترة عدد الأيام =====
+    # ===== فلترة عدد الأيام (باستخدام days فقط) =====
     duration = request.GET.get('duration')
     if duration == '1-3':
         tours = tours.filter(days__gte=1, days__lte=3)
@@ -233,23 +244,29 @@ def all_tours_view(request):
     # ===== فلترة السعر =====
     price_range = request.GET.get('price_range')
     if price_range == '0-1000':
-        tours = tours.filter(price__lte=1000)
+        tours = tours.filter(price__lte=Decimal("1000"))
     elif price_range == '1000-5000':
-        tours = tours.filter(price__gte=1000, price__lte=5000)
+        tours = tours.filter(price__gte=Decimal("1000"), price__lte=Decimal("5000"))
     elif price_range == '5000+':
-        tours = tours.filter(price__gte=5000)
+        tours = tours.filter(price__gte=Decimal("5000"))
 
-    # ===== إعداد قائمة المدن للـ select =====
-    cities = Tour.objects.values_list('city', flat=True).distinct()
+    # ===== إعداد قائمة المدن =====
+    cities = (
+        Tour.objects
+        .order_by('city')
+        .values_list('city', flat=True)
+        .distinct()
+    )
 
-    # ===== مدة كل رحلة =====
-    tours_with_duration = []
-    for tour in tours:
-        duration_days = (tour.end_date - tour.start_date).days + 1
-        tours_with_duration.append({
+    # ===== تجهيز البيانات للعرض =====
+    tours_with_duration = [
+        {
             'tour': tour,
-            'duration': duration_days
-        })
+            'duration': tour.days
+        }
+        for tour in tours
+    ]
+
 
     return render(request, 'agency/all_tours.html', {
         'tours': tours_with_duration,
@@ -257,6 +274,7 @@ def all_tours_view(request):
         'selected_destination': destination,
         'selected_duration': duration,
         'selected_price_range': price_range,
+        'search_query': query,
     })
 
 

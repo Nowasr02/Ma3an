@@ -343,13 +343,9 @@ body {
 .timeline-content-card { background: white; border-radius: 15px; padding: 15px 20px; border: 1px solid #f0f0f0; transition: all 0.3s ease; }
 .timeline-content-card:hover { transform: translateX(5px); border-color: #0d6efd; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
-/* تفاصيل النشاط (وقت وموقع) */
-.event-time { font-size: 0.8rem; font-weight: 600; color: #0d6efd; margin-bottom: 5px; background: #f0f7ff; display: inline-block; padding: 2px 10px; border-radius: 5px; }
-.event-location { font-size: 0.8rem; color: #666; border-top: 1px dashed #eee; padding-top: 8px; margin-top: 8px; }
-.map-link { color: #0d6efd; text-decoration: none; font-weight: bold; margin-left: 5px; }
-
-/* كارد الملخص الجانبي */
-.summary-card { background: #fff; border-radius: 20px; padding: 25px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
-/* إخفاء آخر قطعة من الخط ليكون التصميم نظيفاً */
-.timeline-event:last-child .timeline-line { display: none; }
+/* ======= Responsive ======= */
+@media (max-width:768px) {
+    .page-title-section h1 { font-size: 1.8rem; }
+    .filter-controls { flex-direction: column; }
+    .filter-item { width: 100%; }
+}

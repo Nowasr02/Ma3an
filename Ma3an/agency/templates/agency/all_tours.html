@@ -22,11 +22,12 @@
         <p class="text-muted">Discover amazing destinations and create unforgettable memories</p>
     </div>
 
-    <div class="filter-section mb-5 p-4 bg-white shadow-sm" style="border-radius: 20px;">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label fw-bold small text-secondary">Search</label>
-                <input type="text" name="search" class="form-control border-0 bg-light rounded-3" placeholder="Search tours..." value="{{ request.GET.search }}">
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <form method="get" class="filter-controls">
+            <div class="filter-item">
+                <label>Search</label>
+                <input type="text" name="search" placeholder="Search tours..." value="{{ request.GET.search }}">
             </div>
 
             <div class="col-md-3">
@@ -55,60 +56,79 @@
         </form>
     </div>
 
-    <div class="row g-4">
+    <!-- Tours Grid -->
+    <div class="tours-grid">
         {% for item in tours %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="tour-card-wrapper h-100 d-flex flex-column">
-                <div class="tour-card-new flex-grow-1">
-                    <div class="card-image-container">
-                        {% if item.tour.image %}
-                            <img src="{{ item.tour.image.url }}" alt="{{ item.tour.name }}">
-                        {% else %}
-                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.tour.name }}">
-                        {% endif %}
-                        
-                        <div class="price-badge">
-                            {{ item.tour.price }} SAR <span class="per-night">/ Person</span>
-                        </div>
-
-                        <div class="card-info-overlay">
-                            <div class="info-header mb-1">
-                                <h3 class="card-title h5 mb-0 fw-bold" style="color: #ffffff !important;">{{ item.tour.name }}</h3>
-                            </div>
-                            
-                            <div class="location small mb-2" style="color: #ffffff !important;">
-                                <i class="fas fa-map-marker-alt me-1"></i> {{ item.tour.city }}, {{ item.tour.country }}
-                            </div>
-
-                            <div class="specs d-flex gap-3 small mb-3" style="color: #ffffff !important;">
-                                <span><i class="far fa-calendar-alt me-1"></i> {{ item.duration }} Days</span>
-                                <span><i class="fas fa-users me-1"></i> Max: {{ item.tour.travelers }}</span>
-                            </div>
-
-                            <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-reserve">
-                                <i class="fas fa-info-circle me-2"></i> Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                {% if user.is_authenticated and user.role == 'agency' %}
-                <div class="admin-actions mt-3 d-flex justify-content-center gap-2 pb-3">
-                    <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn btn-sm btn-outline-secondary px-4 rounded-pill shadow-sm">
-                        <i class="fas fa-pen me-1"></i> Edit
-                    </a>
-                    
-                    <a href="{% url 'agency:delete_tour' item.tour.id %}" 
-                       onclick="return confirm('⚠️ Are you sure you want to delete this tour? This action cannot be undone.');"
-                       class="btn btn-sm btn-outline-danger px-4 rounded-pill shadow-sm">
-                        <i class="fas fa-trash me-1"></i> Delete
-                    </a>
-                </div>
+        <div class="tour-card">
+            <div class="tour-image">
+                {% if item.tour.image %}
+                    <img src="{{ item.tour.image.url }}" alt="{{ item.tour.name }}">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.tour.name }}">
                 {% endif %}
             </div>
+            <div class="tour-content">
+                <h3 class="tour-title">{{ item.tour.name }}</h3>
+                <div class="tour-meta">
+                    <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ item.tour.city }}, {{ item.tour.country }}</span></div>
+                    <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ item.duration }} day{% if item.duration > 1 %}s{% endif %}</span></div>
+                </div>
+                <div class="price-section">
+                    <div class="tour-price">{{ item.tour.price }} SAR<span class="person-price">/ person</span></div>
+                </div>
+                <div class="action-buttons">
+                    <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-book">Details</a>
+                    <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn-secondary-action">Edit</a>
+                    <a href="{% url 'agency:delete_tour' item.tour.id %}" class="btn-secondary-action">Delete</a>
+                </div>
+            </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
+
+        <div class="tours-grid">
+            {% for item in tours %}
+            <div class="tour-card">
+                <div class="tour-image">
+                    {% if item.tour.image %}
+                        <img src="{{ item.tour.image.url }}" alt="{{ item.tour.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.tour.name }}">
+                    {% endif %}
+                    <div class="rating">
+                        <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+                        <span class="star">★</span><span class="star">★</span>
+                    </div>
+                </div>
+                <div class="tour-content">
+                    <h3 class="tour-title">{{ item.tour.name }}</h3>
+                    <div class="tour-meta">
+                        <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ item.tour.city }}, {{ item.tour.country }}</span></div>
+                        <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ item.duration }} day{% if item.duration > 1 %}s{% endif %}</span></div>
+                    </div>
+                    <div class="price-section">
+                        <div class="tour-price">{{ item.tour.price }} SAR<span class="person-price">/ person</span></div>
+                    </div>
+                    <div class="action-buttons">
+                    {% if user.is_authenticated %}
+
+                        <!-- Traveler -->
+                        {% if user.is_authenticated and user.traveler_profile %}
+                        <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ item.tour.id }}&next={{ request.path }}"><button class="buy-btn">Pay Now</button></a>
+                        {% endif %}
+
+                
+                        <!-- Agency -->
+                        {% if user.role == 'agency' %}
+                        <a href="{% url 'agency:edit_tour' item.tour.id %}" class="btn-secondary-action">Edit</a>
+                        <a href="{% url 'agency:delete_tour' item.tour.id %}" class="btn-secondary-action">Delete</a>
+                        {% endif %}
+
+                        <a href="{% url 'agency:tour_detail' item.tour.id %}" class="btn-book">Details</a>
+                        
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
             <div class="no-tours">
                 <i class="fas fa-map-marked-alt fa-5x text-muted mb-3"></i>
                 <h4>No tours available yet</h4>
@@ -117,6 +137,7 @@
                     <a href="{% url 'agency:add_tour' %}" class="btn btn-primary rounded-pill px-4 mt-2">+ Create Your First Tour</a>
                 {% endif %}
             </div>
+            {% endfor %}
         </div>
         {% endfor %}
     </div>
