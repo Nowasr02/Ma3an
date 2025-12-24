@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Arial, sans-serif; background:#f4f6f8; padding: 24px;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:12px; padding:24px;">
+            <tr>
+              <td style="text-align:center; padding-bottom:16px;">
+                <h2 style="margin:0; color:#111;">New Contact Message</h2>
+                <p style="margin:6px 0 0; color:#666;">Ma3an Website</p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="padding: 8px 0;">
+                <p style="margin:0 0 10px;"><strong>Full name:</strong> {{ full_name }}</p>
+                <p style="margin:0 0 10px;"><strong>Email:</strong> {{ email }}</p>
+
+                <hr style="border:none; border-top:1px solid #eee; margin:16px 0;">
+
+                <p style="margin:0 0 8px;"><strong>Message:</strong></p>
+                <div style="white-space: pre-line; color:#333; line-height:1.6;">
+                  {{ message }}
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="text-align:center; padding-top:16px; color:#999; font-size:12px;">
+                Sent from the Ma3an contact form
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,251 +1,348 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Ma3an - Travel Together, Stay Connected{% endblock %}
+{% block main_class %}main-wrapper{% endblock %}
+
+{% block extra_css %}
+<style>
+  .layer-bg{ background-image: url("{% static 'landing/img33.png' %}"); }
+  .scene-airport{ background-image: url("{% static 'landing/airport.png' %}"); }
+  .scene-bus{ background-image: url("{% static 'landing/bus_eiffel.png' %}"); }
+</style>
+{% endblock %}
+
 
 {% block content %}
-<!-- Hero Section with Parallax -->
-<section class="parallax" style="background-image: url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200'); min-height: 100vh; display: flex; align-items: center;">
-    <div class="container parallax-content">
-        <div class="row justify-content-center text-center text-white">
-            <div class="col-lg-10" data-aos="fade-up">
-                <h1 class="display-3 fw-bold mb-4">Travel Together. Stay Together. Stay Ma3an.</h1>
-                <p class="lead fs-4 mb-5">The ultimate platform for group travel coordination. Real-time updates, instant communication, and seamless management for tour agencies and travelers.</p>
-                <div class="d-flex gap-3 justify-content-center flex-wrap">
-                    <a href="#tours" class="btn btn-primary-custom btn-lg px-5">Explore Tours</a>
-                    <a href="#" class="btn btn-secondary-custom btn-lg px-5">Register Your Agency</a>
-                </div>
-            </div>
-        </div>
+<div style="background: #222; color: #fff; padding: 10px; margin: 10px;">
+  DEBUG messages count: {{ messages|length }}
+</div>
+
+
+<section class="sky-hero" id="hero">
+  <div class="parallax-layer layer-bg" aria-hidden="true"></div>
+  <div class="parallax-layer layer-fog" aria-hidden="true"></div>
+
+  <div class="hero-text-container">
+    <h1 class="hero-title">Ma3an</h1>
+    <p class="hero-arabic">معًا</p>
+    <p class="hero-tagline">Journey together through every moment of your adventure</p>
+
+    <div class="hero-actions">
+      <a href="#tours" class="btn btn-primary-custom btn-lg px-5">Explore Tours</a>
+      <a href="#" class="btn btn-secondary-custom btn-lg px-5">Register Your Agency</a>
     </div>
+  </div>
 </section>
 
-<!-- About Section -->
-<section id="about" class="bg-light">
-    <div class="container">
-        <h2 class="section-title text-center" data-aos="fade-up">What is Ma3an (معًا)?</h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center" data-aos="fade-up" data-aos-delay="100">
-                <p class="lead mb-4">Ma3an is your comprehensive travel coordination platform, bringing tour agencies, supervisors, and travelers together in one unified ecosystem.</p>
-                <p class="text-muted fs-5 mb-5">We understand the challenges of group travel - from keeping everyone informed to managing complex itineraries. That's why we've built a platform that makes coordination effortless.</p>
-            </div>
+<section class="cloud-features" id="about">
+  <div class="container">
+
+    <!-- About Title -->
+    <h2 class="section-title text-center" data-aos="fade-up">
+      About Ma3an
+    </h2>
+
+    <!-- About Description -->
+    <p class="text-center text-muted fs-4 mb-5" data-aos="fade-up" data-aos-delay="100" style="max-width: 900px; margin-inline: auto;">
+      <strong>Ma3an (معًا)</strong> is a smart tour management and group coordination platform built to simplify
+      organized travel experiences. It connects travel agencies, tour guides, and travelers in one
+      unified system, eliminating common challenges such as lost travelers, missed updates, and fragmented
+      communication.
+    </p>
+
+
+    <!-- Feature Cards -->
+    <div class="features-container">
+
+      <div class="feature-card from-left" data-scroll-reveal>
+        <div class="feature-icon-large">
+          <i class="bi bi-geo-alt-fill"></i>
         </div>
-        
-        <div class="row g-4 mt-3">
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="text-center p-4 h-100 benefit-card">
-                    <i class="bi bi-lightning-charge-fill text-warning fs-1 mb-3"></i>
-                    <h5 class="fw-bold mb-2">Real-time Updates</h5>
-                    <p class="text-muted">Instant notifications keep everyone informed about schedule changes and important announcements</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-                <div class="text-center p-4 h-100 benefit-card">
-                    <i class="bi bi-chat-dots-fill text-primary fs-1 mb-3"></i>
-                    <h5 class="fw-bold mb-2">Instant Communication</h5>
-                    <p class="text-muted">Stay connected with your group through integrated messaging and announcements</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-                <div class="text-center p-4 h-100 benefit-card">
-                    <i class="bi bi-calendar-check-fill text-success fs-1 mb-3"></i>
-                    <h5 class="fw-bold mb-2">Better Coordination</h5>
-                    <p class="text-muted">Seamlessly manage schedules, itineraries, and activities all in one place</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="500">
-                <div class="text-center p-4 h-100 benefit-card">
-                    <i class="bi bi-gear-fill text-danger fs-1 mb-3"></i>
-                    <h5 class="fw-bold mb-2">Unified Platform</h5>
-                    <p class="text-muted">All-in-one solution that brings agencies, supervisors, and travelers together</p>
-                </div>
-            </div>
+        <div class="feature-content">
+          <h3 class="feature-title">Real-Time Group Visibility</h3>
+          <p class="feature-description">
+            Tour guides can monitor the entire group at a glance, ensuring no traveler is left behind
+            and responding quickly if someone goes off track.
+          </p>
         </div>
+      </div>
+
+      <div class="feature-card from-right" data-scroll-reveal>
+        <div class="feature-icon-large">
+          <i class="bi bi-bell-fill"></i>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">Instant Communication</h3>
+          <p class="feature-description">
+            Schedule changes, meeting points, and urgent announcements are delivered instantly,
+            keeping everyone informed without confusion.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-card from-left" data-scroll-reveal>
+        <div class="feature-icon-large">
+          <i class="bi bi-calendar2-check-fill"></i>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">Centralized Trip Information</h3>
+          <p class="feature-description">
+            Travelers can access itineraries, schedules, and important details anytime,
+            removing reliance on printed documents or multiple chat threads.
+          </p>
+        </div>
+      </div>
+
+      <div class="feature-card from-right" data-scroll-reveal>
+        <div class="feature-icon-large">
+          <i class="bi bi-shield-check"></i>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">Safety & Control</h3>
+          <p class="feature-description">
+            Built-in alerts and monitoring tools help tour guides act quickly,
+            improving safety and giving travelers peace of mind throughout the journey.
+          </p>
+        </div>
+      </div>
+
     </div>
+  </div>
 </section>
 
-<!-- Benefits Section -->
-<section id="benefits">
-    <div class="container">
-        <h2 class="section-title text-center" data-aos="fade-up">Why Choose Ma3an?</h2>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
-                <div class="benefit-box text-center p-4">
-                    <div class="feature-icon mb-4">
-                        <i class="bi bi-globe"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">Global Reach</h5>
-                    <p class="text-muted">Connect with travelers and agencies worldwide. Expand your network and reach international destinations with ease.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
-                <div class="benefit-box text-center p-4">
-                    <div class="feature-icon mb-4">
-                        <i class="bi bi-shield-check"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">Secure & Safe</h5>
-                    <p class="text-muted">Your data is protected with enterprise-grade security. Travel with confidence knowing your information is safe.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
-                <div class="benefit-box text-center p-4">
-                    <div class="feature-icon mb-4">
-                        <i class="bi bi-phone"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">Mobile Ready</h5>
-                    <p class="text-muted">Access anywhere, anytime from any device. Stay connected on the go with our mobile-optimized platform.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
-                <div class="benefit-box text-center p-4">
-                    <div class="feature-icon mb-4">
-                        <i class="bi bi-heart"></i>
-                    </div>
-                    <h5 class="fw-bold mb-3">User Friendly</h5>
-                    <p class="text-muted">Intuitive interface designed for everyone. No technical expertise required to get started.</p>
-                </div>
-            </div>
-        </div>
+
+<section class="scene-section scene-airport" id="journey-airport">
+  <div class="scene-overlay"></div>
+  <div class="container scene-content">
+    <div class="row justify-content-center text-center text-white">
+      <div class="col-lg-9" data-aos="fade-up">
+        <h2 class="display-5 fw-bold mb-3">Arrive At The Airport</h2>
+        <p class="lead fs-4 mb-0">Check ins, meeting points, and live updates from the first moment.</p>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- Available Tours Section with Parallax -->
-<section id="tours" class="parallax" style="background-image: url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200'); padding: 100px 0;">
-    <div class="container parallax-content">
-        <h2 class="section-title text-center text-white" data-aos="fade-up">Available Tours</h2>
-        <div class="row g-4">
-            {% for tour in tours %}
-            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
-                <div class="card tour-card shadow-lg">
-                    <div class="tour-image-wrapper">
-                        {% if tour.image %}
-                            <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.name }}">
-                        {% else %}
-                            <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400" class="card-img-top" alt="{{ tour.name }}">
-                        {% endif %}
-                        <div class="tour-duration-badge">
-                            <i class="bi bi-calendar3"></i> {{ tour.days }} Day{{ tour.days|pluralize }}
-                        </div>
-                        <div class="tour-capacity-badge">
-                            <i class="bi bi-people-fill"></i> {{ tour.travelers }} Travelers
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold mb-3">{{ tour.name }}</h5>
-                        <div class="tour-info mb-3">
-                            <p class="text-muted mb-2">
-                                <i class="bi bi-geo-alt-fill text-danger"></i> {{ tour.city }}, {{ tour.country }}
-                            </p>
-                            <p class="text-muted mb-2">
-                                <i class="bi bi-calendar-check text-success"></i> {{ tour.start_date|date:"M d, Y" }}
-                            </p>
-                        </div>
-                        <div class="tour-footer d-flex justify-content-between align-items-center mt-4">
-                            <div class="tour-price">
-                                <small class="text-muted d-block">Price per person</small>
-                                <h4 class="text-primary-custom fw-bold mb-0">${{ tour.price|floatformat:0 }}</h4>
-                            </div>
-                            <a href="#" class="btn btn-primary-custom">View Details</a>
-                        </div>
-                    </div>
-                </div>
+<section id="tours" class="bg-light">
+  <div class="container">
+    <h2 class="section-title text-center" data-aos="fade-up">Available Tours</h2>
+
+    <div class="row g-4">
+      {% for tour in tours %}
+      <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter }}00">
+        <div class="card tour-card shadow-lg">
+          <div class="tour-image-wrapper">
+            {% if tour.image %}
+              <img src="{{ tour.image.url }}" class="card-img-top" alt="{{ tour.name }}">
+            {% else %}
+              <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400" class="card-img-top" alt="{{ tour.name }}">
+            {% endif %}
+            <div class="tour-duration-badge"><i class="bi bi-calendar3"></i> {{ tour.days }} Day{{ tour.days|pluralize }}</div>
+            <div class="tour-capacity-badge"><i class="bi bi-people-fill"></i> {{ tour.travelers }} Travelers</div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title fw-bold mb-3">{{ tour.name }}</h5>
+            <div class="tour-info mb-3">
+              <p class="text-muted mb-2"><i class="bi bi-geo-alt-fill text-danger"></i> {{ tour.city }}, {{ tour.country }}</p>
+              <p class="text-muted mb-2"><i class="bi bi-calendar-check text-success"></i> {{ tour.start_date|date:"M d, Y" }}</p>
             </div>
-            {% endfor %}
+            <div class="tour-footer d-flex justify-content-between align-items-center mt-4">
+              <div class="tour-price">
+                <small class="text-muted d-block">Price per person</small>
+                <h4 class="text-primary-custom fw-bold mb-0">${{ tour.price|floatformat:0 }}</h4>
+              </div>
+              <a href="#" class="btn btn-primary-custom">View Details</a>
+            </div>
+          </div>
         </div>
+      </div>
+      {% endfor %}
     </div>
+    <!-- CTA BUTTON -->
+    <div class="text-center mt-5" data-aos="fade-up">
+      <a href="#" class="btn btn-lg btn-primary-custom px-5 py-3">
+        View All Tours
+      </a>
+    </div>
+  </div>
 </section>
 
-<!-- For Tour Agencies Section -->
-<section id="agencies" style="background: linear-gradient(135deg, var(--primary-color), var(--dark-color)); color: white;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center" data-aos="fade-up">
-                <h2 class="section-title text-white mb-4">Are You a Tour Agency?</h2>
-                <p class="lead mb-5">Join Ma3an and transform the way you manage group tours. Our comprehensive platform gives you all the tools you need to deliver exceptional travel experiences.</p>
-                
-                <div class="row g-4 text-start mb-5">
-                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="100">
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill fs-3 me-3 flex-shrink-0"></i>
-                            <div>
-                                <h5 class="mb-2">Manage Tours Effortlessly</h5>
-                                <p class="text-white-50">Create, edit, and oversee multiple tours from a single dashboard</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="200">
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill fs-3 me-3 flex-shrink-0"></i>
-                            <div>
-                                <h5 class="mb-2">Assign Supervisors</h5>
-                                <p class="text-white-50">Delegate responsibilities and track supervisor performance in real-time</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6" data-aos="fade-right" data-aos-delay="300">
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill fs-3 me-3 flex-shrink-0"></i>
-                            <div>
-                                <h5 class="mb-2">Upload Schedules</h5>
-                                <p class="text-white-50">Share detailed itineraries and keep everyone on the same page</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6" data-aos="fade-left" data-aos-delay="400">
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill fs-3 me-3 flex-shrink-0"></i>
-                            <div>
-                                <h5 class="mb-2">Send Announcements</h5>
-                                <p class="text-white-50">Broadcast important updates instantly to all travelers</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <a href="#" class="btn btn-lg px-5" style="background-color: white; color: var(--primary-color); font-weight: 600;" data-aos="zoom-in">
-                    Register Your Tour Agency
-                </a>
-            </div>
-        </div>
+<section class="scene-section scene-bus" id="journey-bus">
+  <div class="scene-overlay"></div>
+  <div class="container scene-content">
+    <div class="row justify-content-center text-center text-white">
+      <div class="col-lg-9" data-aos="fade-up">
+        <h2 class="display-5 fw-bold mb-3">Move Together</h2>
+        <p class="lead fs-4 mb-0">Coordinated meetups and smooth transitions between every stop.</p>
+      </div>
     </div>
+  </div>
 </section>
 
-<!-- Contact Us Section -->
+<section class="scene-section" id="agencies" style="background: linear-gradient(135deg, var(--primary), var(--primary-2));">
+  <div class="scene-overlay" style="background: rgba(0,0,0,0.35);"></div>
+
+  <div class="container scene-content">
+    <div class="row justify-content-center text-center text-white">
+      <div class="col-lg-9" data-aos="fade-up">
+
+        <h2 class="display-5 fw-bold mb-4">
+          Are You a Tour Agency?
+        </h2>
+
+        <p class="lead fs-4 mb-4">
+          Manage your tours smarter with Ma3an.
+        </p>
+
+        <p class="fs-5 mb-5" style="opacity: 0.9;">
+          Ma3an helps travel agencies deliver smoother, more organized trips by bringing
+          travelers, supervisors, schedules, and communication into one powerful platform.
+          Reduce manual coordination and focus on creating exceptional travel experiences.
+        </p>
+
+        <a href="#" class="btn btn-secondary-custom btn-lg px-5">
+          Join Our Agencies
+        </a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="contact" class="bg-light">
-    <div class="container">
-        <h2 class="section-title text-center" data-aos="fade-up">Contact Us</h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    {% endfor %}
-                {% endif %}
-                
-                <div class="card shadow-lg border-0">
-                    <div class="card-body p-5">
-                        <form method="post" action="#">
-                            {% csrf_token %}
-                            <div class="mb-4">
-                                <label for="name" class="form-label fw-bold">Full Name</label>
-                                <input type="text" class="form-control form-control-lg" id="name" name="name" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="email" class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control form-control-lg" id="email" name="email" required>
-                            </div>
-                            <div class="mb-4">
-                                <label for="message" class="form-label fw-bold">Message</label>
-                                <textarea class="form-control form-control-lg" id="message" name="message" rows="5" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary-custom btn-lg w-100">Send Message</button>
-                        </form>
-                    </div>
+  <div class="container">
+
+    <h2 class="section-title text-center" data-aos="fade-up">
+      Contact Us
+    </h2>
+
+    <p class="text-center text-muted fs-5 mb-5" data-aos="fade-up" data-aos-delay="100" style="max-width: 720px; margin-inline: auto;">
+      Have questions about Ma3an or interested in partnering with us?
+      We’d love to hear from you.
+    </p>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-5">
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                  {{ message }}
+                  <button type="button"
+                          class="btn-close"
+                          data-bs-dismiss="alert"
+                          aria-label="Close"></button>
                 </div>
-            </div>
+              {% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'main:contact' %}">
+              {% csrf_token %}
+
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Full Name</label>
+                <input type="text" name="full_name" class="form-control form-control-lg" required>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Email Address</label>
+                <input type="email" name="email" class="form-control form-control-lg" required>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Message</label>
+                <textarea name="message" class="form-control form-control-lg" rows="5" required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary-custom btn-lg w-100">
+                Send Message
+              </button>
+          </form>
+
+          </div>
         </div>
+
+      </div>
     </div>
+
+  </div>
 </section>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function updateHeroText(){
+    const scrollY = window.pageYOffset;
+    const skyHeight = document.querySelector(".sky-hero").offsetHeight;
+    const progress = Math.min(scrollY / (skyHeight * 0.5), 1);
+
+    const heroTitle = document.querySelector(".hero-title");
+    const heroArabic = document.querySelector(".hero-arabic");
+    const heroTagline = document.querySelector(".hero-tagline");
+    const heroActions = document.querySelector(".hero-actions");
+
+    const scale = 1 + (progress * 3);
+    const opacity = 1 - (progress * 1.5);
+
+    heroTitle.style.transform = `scale(${scale})`;
+    heroTitle.style.opacity = opacity;
+
+    heroArabic.style.transform = `scale(${scale * 0.9})`;
+    heroArabic.style.opacity = opacity;
+
+    heroTagline.style.transform = `scale(${scale * 0.8})`;
+    heroTagline.style.opacity = opacity;
+
+    // fade CTA buttons too
+    heroActions.style.transform = `scale(${scale * 0.75})`;
+    heroActions.style.opacity = opacity;
+
+    // OPTIONAL: stop clicking when faded
+    heroActions.style.pointerEvents = opacity <= 0.05 ? "none" : "auto";
+
+    document.querySelector(".sky-hero").style.setProperty("--haze", Math.min(progress * 0.28, 0.28));
+    }
+
+
+  function animateParallax(){
+    const scrollY = window.pageYOffset;
+    const bg = document.querySelector(".layer-bg");
+    const fog = document.querySelector(".layer-fog");
+    if(!bg || !fog) return;
+
+    bg.style.transform = `translateY(${scrollY * 0.15}px) scale(1.05)`;
+    fog.style.transform = `translateY(${scrollY * 0.28}px) scale(1.12)`;
+  }
+
+  function revealFeatures(){
+    const cards = document.querySelectorAll("[data-scroll-reveal]");
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      if(rect.top < window.innerHeight * 0.82){
+        card.classList.add("visible");
+      }
+    });
+  }
+
+  let ticking = false;
+  window.addEventListener("scroll", () => {
+    if(!ticking){
+      window.requestAnimationFrame(() => {
+        updateHeroText();
+        animateParallax();
+        revealFeatures();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  updateHeroText();
+  animateParallax();
+  revealFeatures();
+</script>
 {% endblock %}

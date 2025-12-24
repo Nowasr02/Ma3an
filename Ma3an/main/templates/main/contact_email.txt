@@ -1,0 +1,7 @@
+You received a new message from the Ma3an website contact form.
+
+Full name: {{ full_name }}
+Email: {{ email }}
+
+Message:
+{{ message }}
