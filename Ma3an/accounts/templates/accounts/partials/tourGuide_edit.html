@@ -34,6 +34,20 @@
     <input type="date" name="passport_expiry_date" value="{{ profile.passport_expiry_date|date:'Y-m-d' }}" class="form-control">
 </div>
 
+
+<div class="mb-3">
+    <label class="form-label">Language</label>
+        <select name="languages" class="form-select">
+            <option value="">---</option>
+            {% for lang in languages %}
+                <option value="{{ lang.alpha_2 }}" {% if profile.languages == language.alpha_3 %}selected{% endif %}>
+                    {{ lang.name }}
+                </option>
+            {% endfor %}
+        </select>
+</div>
+<br>
+
 <!-- إذا أردت يمكن تفعيل الـ checkbox لاحقًا -->
 <!--
 <div class="form-check mb-3">

@@ -77,22 +77,26 @@ def create_tourguide_view(request: HttpRequest):
         if form.is_valid():
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
+            
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "There is a registered user with this email.")
 
-            user = User.objects.create_user(
-                email=email,
-                username=email,
-                password=password,
-                role="tourGuide"
-            )
+            else:
+                user = User.objects.create_user(
+                    email=email,
+                    username=email,
+                    password=password,
+                    role="tourGuide"
+                )
 
-            TourGuide.objects.create(
-                user=user,
-                agency=request.user.agency_profile,
-                is_active=True
-            )
+                TourGuide.objects.create(
+                    user=user,
+                    agency=request.user.agency_profile,
+                    is_active=True
+                )
 
-            messages.success(request, "Tour guide created successfully.")
-            return redirect("tourGuide:all_tourguides")
+                messages.success(request, "Tour guide created successfully.")
+                return redirect("tourGuide:all_tourguides")
     else:
         form = TourGuideCreateForm()
 
@@ -151,6 +155,7 @@ def profile_view(request):
             profile.save()
 
     countries = list(pycountry.countries)
+    languages = list(pycountry.languages)
     if request.method == 'POST':
         return redirect('accounts:profile_view')
 
@@ -158,6 +163,7 @@ def profile_view(request):
         'profile': profile,
         'edit_mode': edit_mode,
         'countries': countries,
+        'languages':languages,
     })
 
 def signin_view(request : HttpRequest):
