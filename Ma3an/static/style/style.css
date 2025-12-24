@@ -565,6 +565,13 @@ footer hr{ border-color: rgba(255,255,255,0.12); }
     border-left: 4px solid var(--primary-color);
 }
 
+.alert-danger {
+    background-color: rgba(211, 47, 47, 0.1);
+    color: #b71c1c;
+    border-left: 4px solid #d32f2f;
+    font-weight: 500;
+}
+
 /* ===== Badge Styles ===== */
 .badge-custom {
     background-color: var(--secondary-color);

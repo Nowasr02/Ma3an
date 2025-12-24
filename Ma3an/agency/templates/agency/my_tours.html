@@ -1,72 +1,258 @@
 {% extends 'main/base.html' %}
 {% load static %}
 
-{% block content %}
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/agency.css' %}">
 
-<div class="container py-5">
+<style>
+    :root { 
+        --primary: #2c7967; 
+        --primary-hover: #1f5e4f;
+        --ink: #0f172a;           
+        --text-muted: #64748b;
+        --main-bg: #f8fafc; 
+    }
+    
+    body { 
+        background-color: var(--main-bg); 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+    }
 
-    <div class="page-title-section text-center mb-5">
-        <h1 class="display-4 fw-bold" style="color: #1a202c;">My Tours</h1>
-        <p class="text-muted">Manage all tours you have created</p>
+    .main-wrapper {
+        margin-left: 260px; /* متوافق مع السايدبار */
+        padding: 3rem 2rem;
+        transition: all 0.3s ease;
+    }
+
+    /* فلتر الحالات - أزرار مودرن */
+    .filter-btn {
+        border-radius: 50px;
+        padding: 8px 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.3s;
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: var(--text-muted);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(44, 121, 103, 0.2);
+    }
+
+    /* شبكة الجولات */
+    .tours-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
+        padding-top: 20px;
+    }
+
+    /* كرت الجولة الجديد */
+    .tour-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, 0.7);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tour-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        border-color: var(--primary);
+    }
+
+    .tour-image-wrapper {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .tour-image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: 0.5s;
+    }
+
+    .tour-card:hover .tour-image-wrapper img {
+        transform: scale(1.1);
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(4px);
+        color: var(--primary);
+    }
+
+    .tour-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .tour-title {
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+    }
+
+    .tour-info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .tour-info-item i {
+        width: 20px;
+        color: var(--primary);
+        margin-right: 8px;
+    }
+
+    .tour-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fafafa;
+    }
+
+    .price-tag {
+        font-weight: 800;
+        color: var(--primary);
+        font-size: 1.1rem;
+    }
+
+    .btn-action {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        transition: 0.2s;
+        border: 1px solid #eee;
+        background: white;
+        color: var(--text-muted);
+        text-decoration: none;
+    }
+
+    .btn-action:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .btn-delete:hover {
+        background: #fee2e2;
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+
+    @media (max-width: 991px) {
+        .main-wrapper { margin-left: 0; padding: 1.5rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'agency/sidebar.html' %}
+
+<div class="main-wrapper">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-1" style="color: var(--ink); letter-spacing: -1px;">My Tours</h2>
+            <p class="text-muted small">Manage and track your agency's itineraries</p>
+        </div>
+        <a href="{% url 'agency:add_tour' %}" class="btn px-4 rounded-pill fw-bold" style="background: var(--primary); color: white;">
+            <i class="fas fa-plus me-2"></i> New Tour
+        </a>
     </div>
 
-    <!-- Filter Tabs -->
-    <div class="mb-4 text-center">
-        <a href="?status=upcoming" class="btn btn-outline-primary {% if status == 'upcoming' %}active{% endif %} mx-1">Upcoming Tours</a>
-        <a href="?status=active" class="btn btn-outline-primary {% if status == 'active' %}active{% endif %} mx-1">Active Tours</a>
-        <a href="?status=past" class="btn btn-outline-primary {% if status == 'past' %}active{% endif %} mx-1">Past Tours</a>
+    <div class="mb-5 d-flex gap-2 justify-content-start">
+        <a href="?status=upcoming" class="filter-btn {% if status == 'upcoming' %}active{% endif %}">Upcoming</a>
+        <a href="?status=active" class="filter-btn {% if status == 'active' %}active{% endif %}">Active</a>
+        <a href="?status=past" class="filter-btn {% if status == 'past' %}active{% endif %}">Past History</a>
     </div>
 
-    <!-- Tours Grid -->
     <div class="tours-grid">
         {% if tours %}
             {% for item in tours %}
                 <div class="tour-card">
-                    <div class="tour-image">
+                    <div class="tour-image-wrapper">
                         {% if item.image %}
                             <img src="{{ item.image.url }}" alt="{{ item.name }}">
                         {% else %}
-                            <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ item.name }}">
+                            <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600" alt="Default">
                         {% endif %}
-                        <div class="rating">
-                            <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                            <span class="star">★</span><span class="star">★</span>
+                        <div class="status-badge">{{ status|default:"Tour" }}</div>
+                    </div>
+                    
+                    <div class="tour-body">
+                        <h3 class="tour-title">{{ item.name }}</h3>
+                        <div class="tour-info-item">
+                            <i class="fas fa-map-marker-alt"></i> {{ item.city }}, {{ item.country }}
+                        </div>
+                        <div class="tour-info-item">
+                            <i class="far fa-calendar-alt"></i> {{ item.start_date|date:"M d" }} - {{ item.end_date|date:"M d, Y" }}
+                        </div>
+                        <div class="tour-info-item">
+                            <i class="far fa-clock"></i> {{ item.duration }} Days duration
                         </div>
                     </div>
-                    <div class="tour-content">
-                        <h3 class="tour-title">{{ item.name }}</h3>
-                        <div class="tour-meta">
-                            <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ item.city }}, {{ item.country }}</span></div>
-                            <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ item.duration }} day{% if item.duration > 1 %}s{% endif %}</span></div>
-                            <div class="tour-meta-item"><i class="fas fa-calendar-alt"></i><span>{{ item.start_date|date:"M d, Y" }} - {{ item.end_date|date:"M d, Y" }}</span></div>
-                        </div>
-                        <div class="price-section">
-                            <div class="tour-price">{{ item.price }} SAR<span class="person-price">/ person</span></div>
-                        </div>
-                        <div class="action-buttons">
-                            <a href="{% url 'agency:tour_detail' item.id %}" class="btn-book">Details</a>
-                            <a href="{% url 'agency:edit_tour' item.id %}" class="btn-secondary-action">Edit</a>
-                            <form action="{% url 'agency:delete_tour' item.id %}" method="POST" style="display:inline;">
+
+                    <div class="tour-footer">
+                        <div class="price-tag">{{ item.price }} <small style="font-size: 0.6rem;">SAR</small></div>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'agency:tour_detail' item.id %}" class="btn-action" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'agency:edit_tour' item.id %}" class="btn-action" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{% url 'agency:delete_tour' item.id %}" method="POST" class="d-inline">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" class="btn-action btn-delete" onclick="return confirm('Are you sure you want to delete this tour?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <div class="no-tours text-center">
-                <i class="fas fa-map-marked-alt fa-5x text-muted mb-3"></i>
-                <h4>No tours available yet</h4>
-                <p class="text-muted">Try creating a new tour.</p>
-                <a href="{% url 'agency:add_tour' %}" class="btn btn-primary rounded-pill px-4 mt-2">+ Create Your First Tour</a>
+            <div class="text-center py-5 w-100" style="grid-column: 1 / -1; background: white; border-radius: 30px; border: 2px dashed #e2e8f0;">
+                <div class="py-5">
+                    <i class="fas fa-map-marked-alt fa-4x mb-3" style="color: #cbd5e1;"></i>
+                    <h4 class="fw-bold">No tours found</h4>
+                    <p class="text-muted">You haven't added any tours in this category yet.</p>
+                    <a href="{% url 'agency:add_tour' %}" class="btn mt-3 px-4 rounded-pill fw-bold" style="background: var(--primary); color: white;">
+                        Start by creating one
+                    </a>
+                </div>
             </div>
         {% endif %}
     </div>
-
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

@@ -1,0 +1,157 @@
+<aside class="agn-sidebar-container d-none d-lg-block">
+    <div class="agn-brand-wrapper"> 
+        <div class="agn-icon-box shadow-sm">
+            <i class="bi bi-building fs-5 text-white"></i>
+        </div>
+        <h6 class="agn-brand-text">MA3AN</h6>
+    </div>
+
+    <nav class="agn-navigation-menu">
+        <div class="agn-nav-group">
+            <a href="{% url 'agency:dashboard' %}" class="agn-link-item {% if request.resolver_match.url_name == 'dashboard' %}is-selected{% endif %}">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+            <a href="{% url 'agency:my_tours' %}" class="agn-link-item {% if request.resolver_match.url_name == 'my_tours' %}is-selected{% endif %}">
+                <i class="bi bi-suitcase-lg"></i> <span>My Tours</span>
+            </a>
+        </div>
+        
+        <div class="agn-hr-divider"></div>
+        
+        <div class="agn-nav-group">
+            <p class="agn-group-title">Account</p>
+            <a href="{% url 'agency:subscription_view' %}" class="agn-link-item {% if request.resolver_match.url_name == 'subscription_view' %}is-selected{% endif %}">
+                <i class="bi bi-credit-card"></i> 
+                <span>Subscription</span>
+                {% if agency.current_subscription %}
+                    <span class="agn-pill-badge">Active</span>
+                {% endif %}
+            </a>
+        </div>
+
+        <div class="agn-hr-divider"></div>
+
+        <div class="agn-action-group">
+            <p class="agn-group-title">Team</p>
+            
+            <div class="agn-button-stack"> 
+                <a href="{% url 'accounts:create_tourguide_view' %}" class="agn-btn agn-btn-filled">
+                    <i class="bi bi-person-plus"></i>  Add New Guide
+                </a>
+
+                <a href="/tourGuide/all/guides/" class="agn-btn agn-btn-outlined">
+                    <i class="bi bi-people"></i> View All Guides
+                </a>
+            </div>
+        </div>
+    </nav>
+</aside>
+
+<style>
+    /* 1. المتغيرات الخاصة بالسكشن فقط */
+    :root { 
+        --agn-main: #2c7967; 
+        --agn-bg-hover: rgba(44, 121, 103, 0.08);
+        --agn-text-muted: #64748b;
+        --agn-border-color: #f1f5f9;
+    }
+
+    /* 2. الحاوية الرئيسية */
+    .agn-sidebar-container { 
+        width: 255px; 
+        height: calc(100vh - 76px); 
+        position: fixed; 
+        left: 0; 
+        top: 76px; 
+        background: #ffffff !important; 
+        border-right: 1px solid var(--agn-border-color); 
+        padding: 1.5rem 1rem; 
+        z-index: 1000; 
+    }
+
+    /* 3. تنسيق البراند */
+    .agn-brand-wrapper { text-align: center; margin-bottom: 2rem; }
+    .agn-icon-box {
+        width: 42px; height: 42px; 
+        background-color: var(--agn-main); 
+        border-radius: 12px; display: inline-flex;
+        align-items: center; justify-content: center;
+    }
+    .agn-brand-text { margin-top: 10px; font-weight: 700; color: #0b1b3a; font-size: 0.95rem; }
+
+    /* 4. الروابط (تأكدنا هنا أن كل الروابط لها نفس التنسيق) */
+    .agn-link-item { 
+        display: flex !important; 
+        align-items: center; 
+        padding: 0.7rem 1rem !important; 
+        color: var(--agn-text-muted) !important; 
+        text-decoration: none !important; 
+        border-radius: 10px; 
+        margin-bottom: 5px; 
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s ease-in-out;
+    }
+    .agn-link-item i { margin-right: 12px; font-size: 1.1rem; }
+
+    /* حالة الرابط النشط */
+    .agn-link-item:hover, 
+    .agn-link-item.is-selected { 
+        background: var(--agn-bg-hover) !important; 
+        color: var(--agn-main) !important; 
+        font-weight: 600;
+    }
+
+    /* 5. العناوين الجانبية والفواصل */
+    .agn-group-title {
+        font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+        color: #94a3b8; letter-spacing: 1px; padding-left: 10px; margin-bottom: 10px;
+    }
+    .agn-hr-divider { height: 1px; background: var(--agn-border-color); margin: 20px 0; }
+
+    /* 6. الأزرار (حل مشكلة اختلاف الشكل) */
+    .agn-button-stack { display: flex; flex-direction: column; gap: 12px; }
+
+    .agn-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 15px !important;
+        border-radius: 12px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+        transition: 0.3s;
+        border: 1px solid transparent;
+        width: 100%;
+    }
+
+    /* الزر الملون */
+    .agn-btn-filled {
+        background-color: var(--agn-main) !important;
+        color: white !important;
+    }
+    .agn-btn-filled:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* الزر المفرغ */
+    .agn-btn-outlined {
+        background-color: transparent !important;
+        border-color: #e2e8f0 !important;
+        color: var(--agn-text-muted) !important;
+    }
+    .agn-btn-outlined:hover {
+        border-color: var(--agn-main) !important;
+        color: var(--agn-main) !important;
+        background: #f8fafc !important;
+    }
+
+    /* ترويسة الحالة (Active Badge) */
+    .agn-pill-badge {
+        margin-left: auto;
+        background: rgba(44, 121, 103, 0.1);
+        color: var(--agn-main);
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 0.65rem;
+    }
+</style>

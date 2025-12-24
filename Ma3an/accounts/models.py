@@ -107,7 +107,7 @@ class TourGuide(models.Model):
     )
     phone = models.CharField(max_length=50, unique=True,blank=True, null=True)
     languages = models.ManyToManyField(Language, related_name="tour_guides", null=True, blank=True)
-    # languages = models.CharField(max_length=255)
+    languages = models.CharField(max_length=255)
     nationality = models.CharField(max_length=3, null=True, blank=True)
     passport_number = models.CharField(max_length = 20, unique=True, null=True, blank=True)
     passport_expiry_date = models.DateField(null=True, blank=True)
