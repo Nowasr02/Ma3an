@@ -9,6 +9,7 @@ from agency.models import Subscription
 from backOffice.decorators import admin_only
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 
 User = get_user_model()

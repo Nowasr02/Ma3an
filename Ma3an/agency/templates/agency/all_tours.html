@@ -69,17 +69,30 @@
                         <img src="{{ tour.image.url }}" alt="{{ tour.name }}">
                     {% else %}
                         <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="{{ tour.name }}">
-                    {% endif %}
-                    <div class="rating">
-                        <span class="star">★</span><span class="star">★</span><span class="star">★</span>
-                        <span class="star">★</span><span class="star">★</span>
-                    </div>
+                    {% endif %}                  
+                                        
                 </div>
                 <div class="tour-content">
                     <h3 class="tour-title">{{tour.name }}</h3>
                     <div class="tour-meta">
                         <div class="tour-meta-item"><i class="fas fa-map-marker-alt"></i><span>{{ tour.city }}, {{ tour.country }}</span></div>
                         <div class="tour-meta-item"><i class="far fa-clock"></i><span>{{ tour.duration }} day{% if tour.duration > 1 %}s{% endif %}</span></div>
+                        <!-- Rating -->
+                        <div class="rating">
+                            {% with avg=tour.avg_rating|default:0 %}
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg %}
+                                        <span class="star filled">★</span>
+                                    {% else %}
+                                        <span class="star">★</span>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        
+                            <small class="reviews-count">
+                                ({{ tour.reviews_count }})
+                            </small>
+                        </div>
                     </div>
                     <div class="price-section">
                         <div class="tour-price">{{ tour.price }} SAR<span class="person-price">/ person</span></div>
@@ -89,6 +102,7 @@
 
                         <!-- Traveler -->
                         {% if user.role == 'traveler' %}
+                        <a href="{% url 'traveler:traveler_tour_detail_view' tour.id %}" class="btn-book">Details</a>
                         <a href="{% url 'traveler:start_payment_view' %}?tour_id={{ tour.id }}" class="pay-link"><button class="pay-btn">Pay Now</button></a>
                         {% endif %}
 
@@ -97,10 +111,9 @@
                         {% if user.role == 'agency' %}
                         <a href="{% url 'agency:edit_tour' tour.id %}" class="btn-secondary-action">Edit</a>
                         <a href="{% url 'agency:delete_tour' tour.id %}" class="btn-secondary-action">Delete</a>
+                        <a href="{% url 'agency:tour_detail' tour.id %}" class="btn-book">Details</a>
                         {% endif %}
 
-                        <a href="{% url 'agency:tour_detail' tour.id %}" class="btn-book">Details</a>
-                        
                     {% endif %}
                     </div>
                 </div>

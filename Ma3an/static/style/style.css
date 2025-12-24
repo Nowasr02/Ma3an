@@ -683,3 +683,23 @@ footer a:hover {
         font-size: 13px;
     }
 }
+
+.details-btn {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2E7D32, #14b85b);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.details-btn:hover {
+    background: linear-gradient(135deg, #2E7D32, #14b85b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(20, 184, 36, 0.6);
+    color: #fff;
+}

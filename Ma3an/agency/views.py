@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Avg, Count, IntegerField
+from django.db.models.functions import Cast, Round
 from django.core.paginator import Paginator
 from decimal import Decimal
 from .models import Tour, TourSchedule
@@ -131,7 +132,17 @@ def add_tour_view(request):
 
 
 def all_tours_view(request):
-    tours = Tour.objects.all()
+    tours = (
+        Tour.objects
+        .annotate(
+            avg_rating_raw=Avg("reviews__rating"),
+        )
+        .annotate(
+            avg_rating=Cast(Round("avg_rating_raw"), IntegerField()),
+            reviews_count=Count("reviews")
+        )
+        .order_by("-avg_rating", "-reviews_count", "-id")
+    )
 
     # ===== Search (by tour name + by agency name) =====
     query = request.GET.get("q", "").strip()
@@ -165,8 +176,9 @@ def all_tours_view(request):
         tours = tours.filter(price__gte=Decimal("1000"), price__lte=Decimal("5000"))
     elif price_range == '5000+':
         tours = tours.filter(price__gte=Decimal("5000"))
+
      # ===== Pagination =====
-    paginator = Paginator(tours, 6)  # 👈 عدد الكروت في الصفحة
+    paginator = Paginator(tours, 6)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -276,6 +288,8 @@ def add_schedule_view(request, tour_id):
                 locations = request.POST.getlist(f"day_{day}_location_name[]")
                 urls = request.POST.getlist(f"day_{day}_location_url[]")
                 descriptions = request.POST.getlist(f"day_{day}_description[]")
+                latitudes = request.POST.getlist(f"day_{day}_latitude[]")
+                longitudes = request.POST.getlist(f"day_{day}_longitude[]")
 
                 for i in range(len(titles)):
                     TourSchedule.objects.create(
@@ -287,6 +301,8 @@ def add_schedule_view(request, tour_id):
                         location_name=locations[i],
                         location_url=urls[i],
                         description=descriptions[i],
+                        latitude=latitudes[i],
+                        longitude=longitudes[i],
                     )
 
             messages.success(request, "✅ Schedule saved successfully!")

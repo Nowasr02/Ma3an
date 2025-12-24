@@ -598,3 +598,22 @@ body {
         font-size: 13px;
     }
 }
+
+.rating {
+    color: #ddd;
+    font-size: 1rem;
+}
+.rating .filled {
+    color: #f5c518;
+}
+.reviews-count {
+    color: #777;
+    font-size: 0.85rem;
+    margin-left: 4px;
+}
+.star {
+    color: #ddd;
+}
+.star.filled {
+    color: #f5c518;
+}
