@@ -41,12 +41,11 @@
                 <!-- Links -->
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tours">Tours</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'agency:all_tours' %}">Tours</a></li>
                     <li class="nav-item"><a class="nav-link" href="#agencies">Agencies</a></li>
                     <li class="nav-item"><a class="nav-link" href="#contact">Contact Us</a></li>
                     <li class="nav-item">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'agency:subscription_view' %}">subscription </a></li>
-                    {% if user.is_authenticated and user.user_type == 'agency' %}
+                    {% if user.is_authenticated and request.user.role == 'agency' %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'agency:subscription_view' %}">Subscription</a> </li>{% endif %}
 
 

@@ -9,21 +9,21 @@ class Command(BaseCommand):
         subscriptions = [
             {
                 "subscriptionType": "basic",
-                "price": 0.00,
+                "price": 0.99,
                 "tours_limit": 3,
                 "supervisors_limit": 2,
                 "travelers_limit": 10,
             },
             {
                 "subscriptionType": "standard",
-                "price": 1999.00,
+                "price": 99.00,
                 "tours_limit": 10,
                 "supervisors_limit": 5,
                 "travelers_limit": 100,
             },
             {
                 "subscriptionType": "premium",
-                "price": 3999.00,
+                "price": 999.00,
                 "tours_limit": None,
                 "supervisors_limit": None,
                 "travelers_limit": None,

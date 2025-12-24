@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.db import transaction
 from django.db.models import Q
 from accounts.models import Traveler, Notification
-from traveler.models import Review,TravelerPayment, TravelerLocation
+from traveler.models import Review, TravelerPayment, TravelerLocation
 from agency.models import Tour, TourSchedule
 from traveler.services.active_tour import get_active_join
 from traveler.services.location_service import save_traveler_location
