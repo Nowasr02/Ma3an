@@ -1,8 +1,82 @@
 {% extends "main/base.html" %}
 {% load static %}
 
-{% block content %}
+{% block extra_css %}
 <style>
+    :root {
+        --sidebar-bg: #ffffff;
+        --main-bg: #f8f9fa;
+        --accent-color: #198754;
+    }
+
+    body {
+        background-color: var(--main-bg);
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        width: 280px;
+        height: calc(100vh - 76px);
+        position: fixed;
+        left: 0;
+        top: 76px;
+        background: var(--sidebar-bg);
+        border-right: 1px solid #eee;
+        padding: 2rem 1.5rem;
+        z-index: 100;
+        overflow-y: auto;
+    }
+
+    .nav-link-custom {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        color: #555;
+        text-decoration: none;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        transition: 0.3s;
+    }
+
+    .nav-link-custom:hover,
+    .nav-link-custom.active {
+        background: rgba(25, 135, 84, 0.12);
+        color: var(--accent-color);
+        font-weight: 600;
+    }
+
+    /* Main */
+    .dashboard-content {
+        margin-left: 280px;
+        padding: 2rem;
+        min-height: calc(100vh - 76px);
+    }
+
+    .card {
+        border-radius: 16px;
+        border: none;
+    }
+
+    .details-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #2E7D32, #14b85b);
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .details-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(20, 184, 36, 0.5);
+        color: #fff;
+    }
+
     .rating-stars {
         font-size: 1.6rem;
         cursor: pointer;
@@ -12,119 +86,165 @@
     .rating-stars .star.active {
         color: #f5c518;
     }
-    
-    .details-btn {
-    display: inline-block;
-    width: 100%;
-    text-align: center;
-    padding: 10px 14px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #2E7D32, #14b85b);
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-}
-
-.details-btn:hover {
-    background: linear-gradient(135deg, #2E7D32, #14b85b);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(20, 184, 36, 0.6);
-    color: #fff;
-}
 </style>
+{% endblock %}
 
-<div class="container py-4">
+{% block content %}
 
-    <h2 class="fw-bold mb-4">Traveler Dashboard</h2>
-
-    <!-- 🔔 Notifications -->
-    <div class="mb-4">
-        <h5>🔔 Notifications</h5>
-
-        {% for n in notifications %}
-        <div class="alert {% if n.is_read %}alert-secondary{% else %}alert-warning{% endif %}">
-            {{ n.message }}
-            <small class="d-block text-muted">
-                {{ n.created_at|timesince }} ago
-            </small>
-            {% if not n.is_read %}
-            <a href="{% url 'accounts:notification_read' n.id %}" class="small">
-                Mark as read
-            </a>
-            {% endif %}
+<!-- Sidebar -->
+<aside class="sidebar d-none d-lg-block">
+    <div class="mb-4 text-center">
+        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+            style="width: 60px; height: 60px;">
+            <i class="bi bi-person fs-3"></i>
         </div>
-        {% empty %}
-        <p class="text-muted">No notifications yet</p>
-        {% endfor %}
+        <h5 class="fw-bold mb-0">Ma3an</h5>
+        <p class="text-muted small">Traveler Dashboard</p>
     </div>
 
-    <!-- 🧳 Tours -->
-    <div class="row g-4">
-        {% for item in tours_data %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100">
+    <nav>
+        <a href="#" class="nav-link-custom active" data-target="dashboard">
+            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+        </a>
+        <a href="#" class="nav-link-custom" data-target="tour">
+            <i class="bi bi-suitcase-lg me-2"></i> My Tours
+        </a>
+        <a href="#" class="nav-link-custom" data-target="notifications">
+            <i class="bi bi-bell me-2"></i> Notifications
+        </a>
+    </nav>
+</aside>
 
-                {% if item.tour.image %}
-                <img src="{{ item.tour.image.url }}" class="card-img-top">
-                {% endif %}
+<!-- Main Content -->
+<main class="dashboard-content">
+    <div class="container-fluid">
 
-                <div class="card-body">
-                    <h5>{{ item.tour.name }}</h5>
-                    <p class="text-muted">
-                        📍 {{ item.tour.city }}, {{ item.tour.country }}
-                    </p>
-
-                    {% if item.next_event %}
-                    <div class="alert alert-info p-2">
-                        <strong>Next Event</strong><br>
-                        {{ item.next_event.activity_title }}<br>
-                        🕒 {{ item.next_event.start_time }}
-                    </div>
-
-                    {% if item.next_event.latitude and item.next_event.longitude %}
-                    <div id="map-{{ item.tour.id }}" style="height:180px;border-radius:10px;" class="mb-2"></div>
-                    {% endif %}
-                    {% endif %}
-
-                    <a href="{% url 'traveler:traveler_tour_detail_view' item.tour.id %}" 
-                    class="details-btn">Details</a>
-
-                    <hr>
-
-                    {% if item.review %}
-                    <strong>Your Review</strong><br>
-                    <span class="text-warning">
-                        {% for i in "12345" %}
-                        {% if forloop.counter <= item.review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %} </span>
-                            <p class="mt-1">{{ item.review.comment }}</p>
-                            {% else %}
-                            <form method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="tour_id" value="{{ item.tour.id }}">
-                                <input type="hidden" name="rating" id="rating-{{ item.tour.id }}">
-
-                                <div class="rating-stars mb-2" data-tour="{{ item.tour.id }}">
-                                    {% for i in "12345" %}
-                                    <span class="star" data-value="{{ forloop.counter }}">★</span>
-                                    {% endfor %}
-                                </div>
-
-                                <textarea name="comment" class="form-control mb-2"
-                                    placeholder="Write your experience..."></textarea>
-
-                                <button class="btn btn-primary w-100">
-                                    Submit Review
-                                </button>
-                            </form>
-                            {% endif %}
-                </div>
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-1">Welcome, {{ request.user.username }}</h3>
+                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill small">
+                    Traveler Mode
+                </span>
             </div>
         </div>
-        {% endfor %}
-    </div>
 
-</div>
+        <!-- Dashboard -->
+        <div class="card shadow-sm p-4 mb-5 section" id="dashboard">
+
+            {% for item in tours_data %}
+
+            {% if item.next_event %}
+            <div class="alert alert-info p-2 small">
+                <strong>Next Event</strong><br>
+                {{ item.next_event.activity_title }}<br>
+                🕒 {{ item.next_event.start_time }}
+            </div>
+
+            {% if item.next_event.latitude and item.next_event.longitude %}
+            <div id="map-{{ item.tour.id }}" class="mb-3" style="height:180px;border-radius:12px;"></div>
+            {% endif %}
+            {% endif %}
+            
+            {% endfor %}
+        </div>
+
+        <!-- Tours -->
+        <div class="card shadow-sm p-4 mb-5 section d-none" id="tour">
+            <div class="row g-4">
+                {% for item in tours_data %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+
+                        {% if item.tour.image %}
+                        <img src="{{ item.tour.image.url }}" class="card-img-top"
+                            style="height:180px;object-fit:cover;">
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="fw-bold">{{ item.tour.name }}</h5>
+                            <p class="text-muted mb-2">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ item.tour.city }}, {{ item.tour.country }}
+                            </p>
+
+                            {% if item.next_event %}
+                            <div class="alert alert-info p-2 small">
+                                <strong>Next Event</strong><br>
+                                {{ item.next_event.activity_title }}<br>
+                                🕒 {{ item.next_event.start_time }}
+                            </div>
+
+                            {% if item.next_event.latitude and item.next_event.longitude %}
+                            <div id="map-{{ item.tour.id }}" class="mb-3" style="height:180px;border-radius:12px;">
+                            </div>
+                            {% endif %}
+                            {% endif %}
+
+                            <a href="{% url 'traveler:traveler_tour_detail_view' item.tour.id %}"
+                                class="details-btn mb-3">
+                                Details
+                            </a>
+
+                            <hr>
+
+                            {% if item.review %}
+                            <strong>Your Review</strong>
+                            <div class="text-warning">
+                                {% for i in "12345" %}
+                                {% if forloop.counter <= item.review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
+                                    </div>
+                                    <p class="mt-1 small">{{ item.review.comment }}</p>
+                                    {% else %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tour_id" value="{{ item.tour.id }}">
+                                        <input type="hidden" name="rating" id="rating-{{ item.tour.id }}">
+
+                                        <div class="rating-stars mb-2" data-tour="{{ item.tour.id }}">
+                                            {% for i in "12345" %}
+                                            <span class="star" data-value="{{ forloop.counter }}">★</span>
+                                            {% endfor %}
+                                        </div>
+
+                                        <textarea name="comment" class="form-control mb-2"
+                                            placeholder="Write your experience..."></textarea>
+
+                                        <button class="btn btn-success w-100">
+                                            Submit Review
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card shadow-sm p-4 mb-5 section d-none" id="notifications">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-bell me-2 text-warning"></i> Notifications
+            </h5>
+
+            {% for n in notifications %}
+            <div class="alert {% if n.is_read %}alert-secondary{% else %}alert-warning{% endif %}">
+                {{ n.message }}
+                <small class="d-block text-muted">
+                    {{ n.created_at|timesince }} ago
+                </small>
+            </div>
+            {% empty %}
+            <p class="text-muted mb-0">No notifications yet</p>
+            {% endfor %}
+        </div>
+
+
+    </div>
+</main>
 
 <!-- ⭐ Stars JS -->
 <script>
@@ -150,7 +270,7 @@
 {% block extra_js %}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-    {% for item in tours_data %}
+        {% for item in tours_data %}
         {% if item.next_event.latitude and item.next_event.longitude %}
         (function () {
             const mapId = "map-{{ item.tour.id }}";
@@ -163,20 +283,20 @@
 
             const map = L.map(mapId).setView(
                 [{{ item.next_event.latitude }}, {{ item.next_event.longitude }}],
-                14
-            );
+        14
+    );
 
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
-              .addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+        .addTo(map);
 
-            L.marker([
-                {{ item.next_event.latitude }},
-                {{ item.next_event.longitude }}
-            ])
-            .addTo(map)
-            .bindPopup("{{ item.next_event.activity_title|escapejs }}");
-        })();
-        {% endif %}
+    L.marker([
+        {{ item.next_event.latitude }},
+        {{ item.next_event.longitude }}
+    ])
+        .addTo(map)
+        .bindPopup("{{ item.next_event.activity_title|escapejs }}");
+        }) ();
+    {% endif %}
     {% endfor %}
 });
     document.addEventListener("DOMContentLoaded", function () {
@@ -205,6 +325,43 @@
             error => console.error(error),
             { enableHighAccuracy: true }
         );
+
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const navLinks = document.querySelectorAll(".nav-link-custom");
+        const sections = document.querySelectorAll(".section");
+
+        function showSection(id) {
+            sections.forEach(section => {
+                section.classList.add("d-none");
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove("active");
+            });
+
+            const target = document.getElementById(id);
+            if (target) {
+                target.classList.remove("d-none");
+            }
+
+            const activeLink = document.querySelector(`[data-target="${id}"]`);
+            if (activeLink) {
+                activeLink.classList.add("active");
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener("click", function (e) {
+                e.preventDefault();
+                showSection(this.dataset.target);
+            });
+        });
+
+        // default
+        showSection("dashboard");
 
     });
 </script>
