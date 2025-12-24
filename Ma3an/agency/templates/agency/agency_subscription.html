@@ -151,11 +151,12 @@
                         {% endif %}
                     </ul>
 
-                    <form action="{% url 'agency:select_subscription' plan.id %}" method="post" class="mt-auto">
-                        {% csrf_token %}
-                        <button type="submit" class="buy-btn">
-                            Get Started
-                        </button>
+                    <form action="{% url 'agency:start_subscription_payment' plan.id %}" method="post" class="mt-auto">
+    {% csrf_token %}
+    <button type="submit" class="buy-btn mt-auto d-block">Get Started</button>
+</form>
+
+
                     </form>
                 </div>
             </div>

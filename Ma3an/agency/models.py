@@ -23,13 +23,6 @@ class Tour(models.Model):
     end_date = models.DateField()
     days = models.PositiveIntegerField(default=1)
 
-    agency = models.ForeignKey(
-        "accounts.Agency",
-        on_delete=models.CASCADE,
-        related_name="tours",
-        null=True,
-        blank=True
-    )
 
     tour_guide = models.ForeignKey(
         "accounts.TourGuide",
@@ -186,10 +179,10 @@ class AgencySubscription(models.Model):
     start_date = models.DateField(default=timezone.localdate)
     expiry_date = models.DateField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     def __str__(self):
-        return f"{self.agency.agency_name} -> {self.plan.subscriptionType}"
-
-        # إضافة تأمين في حال كان الاسم فارغاً
         agency_name = getattr(self.agency, 'agency_name', 'Unknown Agency')
-        return f"{agency_name} - {self.subscription} - {self.status}"
+        return f"{agency_name} -> {self.plan.subscriptionType} ({self.status})"
+    
+    
+
+    

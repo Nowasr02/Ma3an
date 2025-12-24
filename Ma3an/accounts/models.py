@@ -79,7 +79,6 @@ class Agency(models.Model):
         blank=True, 
         related_name="agency_profiles" 
     )
-      # subscription = models.ForeignKey("agency.Subscription", on_delete=models.SET_NULL, null=True, blank=True)
     rejection_reason = models.TextField(null=True, blank=True)
 
 
